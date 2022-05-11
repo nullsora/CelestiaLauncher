@@ -14,7 +14,7 @@ exports.initDownload = function (win) {
             savedPath: ''
         }
     }
-    ipcMain.on('download', (event, args) => {
+    ipcMain.on('Download', (event, args) => {
         downloadObj.downloadPath = args.URL
         downloadObj.fileName = args.Name
         win.webContents.downloadURL(downloadObj.downloadPath)
@@ -32,7 +32,7 @@ exports.initDownload = function (win) {
                 } else {
                     let progress = item.getReceivedBytes() / item.getTotalBytes() * 100
                     win.setProgressBar(progress)
-                    win.webContents.send('progress', { Progress: progress })
+                    win.webContents.send('Progress', { Progress: progress })
                 }
             }
         })

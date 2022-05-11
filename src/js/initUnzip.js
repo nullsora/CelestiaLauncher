@@ -1,5 +1,5 @@
-const { ipcMain, app } = require('electron')
-const path = require('path')
+const { ipcMain, app, shell } = require('electron');
+const path = require('path');
 const unZip = require('decompress-zip');
 
 exports.initUnzip = function (win) {
@@ -25,6 +25,7 @@ exports.initUnzip = function (win) {
         });
         unzipper.on('extract', function (log) {
             win.webContents.send('unzipFinish', { Finish: true })
+            shell.trashItem(fPath);
             Reset();
             console.log('Finished extracting');
         });

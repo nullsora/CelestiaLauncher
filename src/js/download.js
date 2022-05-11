@@ -1,18 +1,17 @@
 var ipc = require('electron').ipcRenderer;
 var $ = mdui.$;
 var dialog = new mdui.Dialog('#Download', { modal: true });
-var confirmBtn = document.getElementById('ConfirmBtn');
-var dialogTitle = document.getElementById('DialogContent').innerHTML;
+var cmdDialog = new mdui.Dialog('#CMD', { modal: true });
 
 function download(title, url, name) {
     document.getElementById('DialogContent').innerHTML = title;
     dialog.open();
     document.getElementById('Progress').style.width = '0%';
-    ipc.send('download', {
+    ipc.send('Download', {
         URL: url,
         Name: name
     });
-    ipc.on('progress', (event, args) => {
+    ipc.on('Progress', (event, args) => {
         if (args.Progress <= 100) {
             document.getElementById('Progress').style.width = args.Progress + '%';
         }
@@ -21,7 +20,7 @@ function download(title, url, name) {
 
 function unzip(title, name, filePath) {
     document.getElementById('Progress').style.width = '0%';
-    ipc.on('progress', (event, args) => {
+    ipc.on('Progress', (event, args) => {
         if (args.Progress >= 100) {
             document.getElementById('DialogContent').innerHTML = title;
             ipc.send('unzip', {
@@ -37,6 +36,20 @@ function unzip(title, name, filePath) {
                 }
             })
         }
+    })
+}
+
+function command(path, other) {
+    cmdDialog.open();
+    ipc.send('DoCommand', {
+        Path: path,
+        Other: other
+    });
+    ipc.on('CommandReturn', (event, args) => {
+        document.getElementById('CMDContent').innerHTML = args.stdout;
+        console.log(args.stdout);
+        console.error('error:' + args.error);
+        console.log('stderr:' + args.stderr);
     })
 }
 
@@ -74,5 +87,11 @@ document.getElementById('installGit').addEventListener('click', () => {
         '正在安装Git...',
         'git.zip',
         'resources/git'
+    );
+})
+document.getElementById('installGC').addEventListener('click', () => {
+    command(
+        'git/cmd/git.exe',
+        'clone https://ghproxy.com/https://github.com/Grasscutters/Grasscutter.git'
     );
 })
