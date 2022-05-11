@@ -1,11 +1,32 @@
-const { ipcMain } = require('electron')
-const fs = require('fs')
-const unzip = require('./unzip/unzip')
-let filePath;//文件路径
-let unzipPath; //解压后路径
+const { ipcMain, app } = require('electron')
+const path = require('path')
+const unZip = require('decompress-zip');
 
-ipcMain.on('unzip', (event, args) => {
-    filePath = args.filePath
-    unzipPath = args.unzipPath;
-    fs.createReadStream(filePath).pipe(unzip.Extract({ path: unzipPath }));
-})
+exports.initUnzip = function (win) {
+    let UnzipFile = {
+        filePath: '',
+        extractPath: ''
+    };
+    function Reset() {
+        UnzipFile = {
+            filePath: '',
+            extractPath: ''
+        };
+    }
+
+    ipcMain.on('unzip', (event, args) => {
+        let fPath = path.join(app.getAppPath(), 'resources', args.fName);
+        let exPath = path.join(app.getAppPath(), args.exFolder);
+        let unzipper = new unZip(fPath);
+        unzipper.extract({ path: exPath });
+        unzipper.on('progress', function (fileIndex, fileCount) {
+            let progress = fileIndex / fileCount * 100;
+            win.webContents.send('unzipProgress', { Progress: progress });
+        });
+        unzipper.on('extract', function (log) {
+            win.webContents.send('unzipFinish', { Finish: true })
+            Reset();
+            console.log('Finished extracting');
+        });
+    })
+}

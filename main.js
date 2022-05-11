@@ -1,5 +1,6 @@
 var ele = require('electron');
 var dl = require('./src/js/initDownload').initDownload;
+var unzip = require('./src/js/initUnzip').initUnzip;
 
 var app = ele.app;
 var BrowserWindow = ele.BrowserWindow;
@@ -19,6 +20,7 @@ function createWindow() {
     mainWindow.loadFile('./src/index.html')
     mainWindow.webContents.openDevTools()
     dl(mainWindow)
+    unzip(mainWindow)
     mainWindow.on('closed', () => {
         mainWindow = null
     })

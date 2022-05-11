@@ -13,6 +13,7 @@
     "electron": "^18.2.2"
   },
   "dependencies": {
+    "decompress-zip": "^0.3.3",
     "mdui": "^1.0.2"
   }
 }

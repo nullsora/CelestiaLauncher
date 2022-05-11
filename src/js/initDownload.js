@@ -17,7 +17,6 @@ exports.initDownload = function (win) {
     ipcMain.on('download', (event, args) => {
         downloadObj.downloadPath = args.URL
         downloadObj.fileName = args.Name
-        downloadObj.savedPath = args.Path
         win.webContents.downloadURL(downloadObj.downloadPath)
     })
 
@@ -31,7 +30,7 @@ exports.initDownload = function (win) {
                 if (item.isPaused()) {
                     console.log('Download is paused')
                 } else {
-                    let progress = item.getReceivedBytes() / item.getTotalBytes()
+                    let progress = item.getReceivedBytes() / item.getTotalBytes() * 100
                     win.setProgressBar(progress)
                     win.webContents.send('progress', { Progress: progress })
                 }
