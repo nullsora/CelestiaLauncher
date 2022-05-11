@@ -10,7 +10,7 @@
   "author": "KL_kirito",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^18.2.0"
+    "electron": "^18.2.2"
   },
   "dependencies": {
     "mdui": "^1.0.2"

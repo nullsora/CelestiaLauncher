@@ -85,12 +85,26 @@
                     </div>
                 </div>
             </div>
+
+            <div class="mdui-dialog" id="Download">
+                <div id="DialogTitle" class="mdui-dialog-title">下载中</div>
+                <div class="mdui-dialog-content">
+                    <div class="mdui-progress">
+                        <div id="Progress" class="mdui-progress-determinate" style="width: 0%;"></div>
+                    </div>
+                </div>
+                <div class="mdui-dialog-actions">
+                    <button id="ConfirmBtn" class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent"
+                        mdui-dialog-confirm disabled>完成</button>
+                </div>
+            </div>
+
         </div>
     </div>
 
     <script src="../node_modules/mdui/dist/js/mdui.min.js"></script>
     <script src="./js/script.js"></script>
-    <script src="./js/savefile.js"></script>
+    <script src="./js/download.js"></script>
 </body>
 
 </html>

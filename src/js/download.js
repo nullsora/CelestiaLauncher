@@ -1,59 +1,34 @@
-const { ipcMain, shell } = require('electron')
-const path = require('path')
+var ipc = require('electron').ipcRenderer;
+var $ = mdui.$;
+var dialog = new mdui.Dialog('#Download', { modal: true });
+var progressLine = document.getElementById('Progress');
+var confirmBtn = document.getElementById('ConfirmBtn');
+var dialogTitle = document.getElementById('DialogTitle');
 
-exports.initDownload = function (mainWindow) {
-    let downloadObj = {
-        downloadPath: '', // 要下载的链接或文件
-        fileName: '', // 要保存的文件名，需要带文件后缀名
-        savedPath: '' // 要保存的路径
-    }
-    function resetDownloadObj() {
-        downloadObj = {
-            downloadPath: '',
-            fileName: '',
-            savedPath: ''
+function download(title, url, name, path) {
+    dialogTitle = title;
+    dialog.open();
+    progressLine.style.width = '0%';
+    ipc.send('download', {
+        URL: url,
+        Name: name,
+        Path: path
+    });
+    ipc.on('progress', (event, args) => {
+        let Progress = args.Progress * 100;
+        if (Progress < 100) {
+            progressLine.style.width = Progress + '%';
+        } else {
+            confirmBtn.removeAttribute('disabled');
         }
-    }
-    // 监听渲染进程发出的download事件
-    ipcMain.on('download', (evt, args) => {
-        downloadObj.downloadPath = args.downloadPath
-        downloadObj.fileName = args.fileName
-        downloadObj.savedPath = args.filePath
-        let ext = path.extname(downloadObj.fileName)
-        let filters = [{ name: '全部文件', extensions: ['*'] }]
-        if (ext && ext !== '.') {
-            filters.unshift({
-                name: '',
-                extensions: [ext.match(/[a-zA-Z]+$/)[0]]
-            })
-        }
-        if (downloadObj.savedPath) {
-            mainWindow.webContents.downloadURL(downloadObj.downloadPath) // 触发will-download事件
-        }
-    })
-
-    mainWindow.webContents.session.on('will-download', (event, item) => {
-        //设置文件存放位置
-        item.setSavePath(downloadObj.savedPath)
-        item.on('updated', (event, state) => {
-            if (state === 'interrupted') {
-                console.log('Download is interrupted but can be resumed')
-            } else if (state === 'progressing') {
-                if (item.isPaused()) {
-                    console.log('Download is paused')
-                } else {
-                    console.log(`Received bytes: ${item.getReceivedBytes()}`)
-                }
-            }
-        })
-        item.once('done', (event, state) => {
-            if (state === 'completed') {
-                console.log('Download successfully')
-                shell.showItemInFolder(downloadObj.savedPath) // 下载成功后打开文件所在文件夹
-            } else {
-                console.log(`Download failed: ${state}`)
-            }
-            resetDownloadObj()
-        })
-    })
+    });
 }
+
+document.getElementById('installJava').addEventListener('click', () => {
+    download(
+        '正在下载Java...',
+        'https://mirrors.tuna.tsinghua.edu.cn/Adoptium/17/jdk/x64/windows/OpenJDK17U-jdk_x64_windows_hotspot_17.0.3_7.zip',
+        'jdk.zip',
+        './res/'
+    );
+})
