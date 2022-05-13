@@ -1,0 +1,81 @@
+{
+  "DatabaseUrl": "mongodb://localhost:27017",
+  "DatabaseCollection": "grasscutter",
+  "RESOURCE_FOLDER": "./resources/",
+  "DATA_FOLDER": "./data/",
+  "PACKETS_FOLDER": "./packets/",
+  "DUMPS_FOLDER": "./dumps/",
+  "KEY_FOLDER": "./keys/",
+  "SCRIPTS_FOLDER": "./resources/Scripts/",
+  "PLUGINS_FOLDER": "./plugins/",
+  "DebugMode": "NONE",
+  "RunMode": "HYBRID",
+  "GameServer": {
+    "Name": "Celestia",
+    "Ip": "0.0.0.0",
+    "PublicIp": "127.0.0.1",
+    "Port": 22102,
+    "PublicPort": 0,
+    "DispatchServerDatabaseUrl": "mongodb://localhost:27017",
+    "DispatchServerDatabaseCollection": "grasscutter",
+    "InventoryLimitWeapon": 2000,
+    "InventoryLimitRelic": 2000,
+    "InventoryLimitMaterial": 2000,
+    "InventoryLimitFurniture": 2000,
+    "InventoryLimitAll": 30000,
+    "MaxAvatarsInTeam": 20,
+    "MaxAvatarsInTeamMultiplayer": 20,
+    "MaxEntityLimit": 1000,
+    "WatchGacha": false,
+    "ServerNickname": "Console",
+    "ServerAvatarId": 10000046,
+    "ServerNameCardId": 210053,
+    "ServerLevel": 60,
+    "ServerWorldLevel": 8,
+    "ServerSignature": "服务器控制台",
+    "WelcomeEmotes": [
+      2007,
+      1002,
+      4010
+    ],
+    "WelcomeMotd": "欢迎来到Grasscutter!",
+    "WelcomeMailTitle": "欢迎来到Grasscutter！",
+    "WelcomeMailSender": "Grasscutters",
+    "WelcomeMailContent": "你好!\r\n欢迎来到这个服务器！",
+    "WelcomeMailItems": [
+      {
+        "itemId": 11101,
+        "itemCount": 1,
+        "itemLevel": 1
+      }
+    ],
+    "EnableOfficialShop": true,
+    "Game": {
+      "ADVENTURE_EXP_RATE": 1.0,
+      "MORA_RATE": 1.0,
+      "DOMAIN_DROP_RATE": 1.0
+    }
+  },
+  "DispatchServer": {
+    "Ip": "0.0.0.0",
+    "PublicIp": "127.0.0.1",
+    "Port": 443,
+    "PublicPort": 0,
+    "KeystorePath": "./keystore.p12",
+    "KeystorePassword": "123456",
+    "UseSSL": true,
+    "FrontHTTPS": true,
+    "CORS": false,
+    "CORSAllowedOrigins": [
+      "*"
+    ],
+    "AutomaticallyCreateAccounts": false,
+    "defaultPermissions": [
+      ""
+    ],
+    "GameServers": []
+  },
+  "LocaleLanguage": "zh_CN",
+  "DefaultLanguage": "en",
+  "OpenStamina": true
+}

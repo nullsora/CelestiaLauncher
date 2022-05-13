@@ -18,8 +18,17 @@ a {
 
 .mdui-card {
     border-radius: 8px;
+    background-color: rgba(#F5F5F599);
+}
+
+.mdui-card-actions {
+    background-color: rgba(#F5F5F599);
 }
 
 .mdui-drawer {
     background-color: whitesmoke;
+}
+
+.mdui-dialog {
+    border-radius: 5px;
 }
