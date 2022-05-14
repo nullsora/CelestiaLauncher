@@ -1,7 +1,7 @@
 ![csl.jpg](https://s2.loli.net/2022/05/14/nKk4EIhb7pTjCzP.jpg)
 
 ------------
-
+中文 | [English](https://github.com/KL-kirito/CelestiaLauncher/blob/patch-1/README.md)
 
 ### 一个功能~~不~~强大的Grasscutter启动器
 
