@@ -11,7 +11,7 @@ window.onload = function () {
         appPath = args.Path;
         console.log(appPath);
     });
-}
+};
 
 function FileCommand(title, path, other, cwd) {
     configDialog.open();
@@ -21,18 +21,18 @@ function FileCommand(title, path, other, cwd) {
         Other: other,
         Cwd: cwd
     });
-    ipc.on('FileCommandLog', (event, args) => {
+    ipc.once('FileCommandLog', (event, args) => {
         document.getElementById('ConfigLog').innerHTML = args.Log;
         console.log(args.Log);
     });
-    ipc.on('FileCommandReturn', (event, args) => {
+    ipc.once('FileCommandReturn', (event, args) => {
         document.getElementById('ConfigConfirm').removeAttribute('disabled');
         if (args.Return == 0) {
-            document.getElementById('ConfigLog').innerHTML += 'success.'
+            document.getElementById('ConfigLog').innerHTML += 'success.';
         } else {
-            document.getElementById('ConfigLog').innerHTML = 'download failed. exit with code ' + args.Return;
+            document.getElementById('ConfigLog').innerHTML = 'execute failed. exit with code ' + args.Return;
         }
-    })
+    });
 }
 
 function SyncSysCommand(title, command, cwd) {
@@ -48,17 +48,17 @@ function SyncSysCommand(title, command, cwd) {
         console.log(args.Return);
         console.error(args.Error);
         console.log(args.Stderr);
-    })
+    });
 }
 
 document.getElementById('ConfigConfirm').addEventListener('click', () => {
     document.getElementById('ConfigConfirm').setAttribute('disabled', 'true');
     document.getElementById('ConfigLog').innerHTML = '';
-})
+});
 
 document.getElementById('ReturnHome').addEventListener('click', () => {
     window.location.href = './index.html';
-})
+});
 
 document.getElementById('GrasscutterUpdate').addEventListener('click', () => {
     FileCommand(
@@ -67,7 +67,7 @@ document.getElementById('GrasscutterUpdate').addEventListener('click', () => {
         'pull',
         'Grasscutter'
     );
-})
+});
 
 document.getElementById('GrasscutterCompile').addEventListener('click', () => {
     let jdkPath = path.join(appPath, 'resources\\jdk-17.0.3+7');
@@ -77,7 +77,7 @@ document.getElementById('GrasscutterCompile').addEventListener('click', () => {
         'Grasscutter'
     );
     document.getElementById('ConfigConfirm').removeAttribute('disabled');
-})
+});
 
 document.getElementById('GrasscutterPrecompile').addEventListener('click', () => {
     let jdkPath = path.join(appPath, 'resources/jdk-17.0.3+7');
@@ -94,9 +94,9 @@ document.getElementById('GrasscutterPrecompile').addEventListener('click', () =>
     fs.writeFileSync(gradlewBatPath, 'set JAVA_HOME=' + jdkPath + '\n');
     fs.appendFileSync(gradlewBatPath, gradlewBatContent);
     shell.openPath(gradlewBatPath);
-})
+});
 
-document.getElementById('configureGC').addEventListener('click', () => {
+document.getElementById('ConfigureGC').addEventListener('click', () => {
     // possibly cause unresponsiveness
     SyncSysCommand('创建文件夹...', 'mkdir .\\Grasscutter\\resources', '');
     SyncSysCommand(
@@ -129,4 +129,15 @@ document.getElementById('configureGC').addEventListener('click', () => {
         'rd /S /Q .\\Grasscutter_Resources',
         ''
     );
-})
+});
+
+document.getElementById('ChangeBranch').addEventListener('click', () => {
+    let branchName = document.getElementById('BranchInput').value;
+    console.log(branchName);
+    FileCommand(
+        '正在切换分支到' + branchName,
+        'git/cmd/git.exe',
+        'checkout ' + branchName,
+        'Grasscutter'
+    );
+});

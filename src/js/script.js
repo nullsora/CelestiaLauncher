@@ -40,27 +40,27 @@ window.addEventListener('load', () => {
         </div>
     </div>`;
     document.getElementById('base').innerHTML = val;
-    
+
     Drawer = new mdui.Drawer('#drawer');
     document.getElementById('close').addEventListener('click', () => {
         ipc.send('window-close');
-    })
+    });
     document.getElementById('maxi').addEventListener('click', () => {
         ipc.send('window-max');
-    })
+    });
     document.getElementById('mini').addEventListener('click', () => {
         ipc.send('window-min');
-    })
+    });
 
     document.getElementById('link-main-page').addEventListener('click', () => {
         setTimeout(window.open('./index.html', '_self'), 1500);
-    })
+    });
     document.getElementById('link-download').addEventListener('click', () => {
         setTimeout(window.open('./download.html', '_self'), 1500);
-    })
+    });
     document.getElementById('link-config').addEventListener('click', () => {
         setTimeout(window.open('./config.html', '_self'), 1500);
-    })
+    });
 
 
     $('#menu').on('click', function () {

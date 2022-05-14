@@ -9,4 +9,4 @@ exports.initPath = function (win) {
             });
         }, 100);
     });
-}
+};

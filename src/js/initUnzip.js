@@ -30,5 +30,5 @@ exports.initUnzip = function (win) {
             Reset();
             console.log('Finished extracting');
         });
-    })
+    });
 }

@@ -16,7 +16,7 @@ window.onload = function () {
 
         fs.readdir(filePath, function (err, files) {
             if (err) {
-                console.warn(err, "读取文件夹错误！")
+                console.warn(err, "读取文件夹错误！");
             } else {
                 files.forEach(function (fileName) {
                     let fileDir = path.join(filePath, fileName);
@@ -32,12 +32,12 @@ window.onload = function () {
                                 console.log(jarPath.toString());
                             }
                         }
-                    })
+                    });
                 });
             }
         });
     });
-}
+};
 
 document.getElementById('LaunchGame').addEventListener('click', () => {
     let mongoPath = path.join(appPath, 'resources\\launchmongo.bat');
@@ -50,4 +50,4 @@ document.getElementById('LaunchGame').addEventListener('click', () => {
     setTimeout(() => {
         shell.openPath(launchPath);
     }, 1000);
-})
+});

@@ -1,7 +1,15 @@
 var ipc = require('electron').ipcRenderer;
-var shell = require('electron').shell;
 var dialog = new mdui.Dialog('#Download', { modal: true });
 var cmdDialog = new mdui.Dialog('#CMD', { modal: true });
+var appPath;
+
+window.onload = function () {
+    ipc.send('GetAppPath', {});
+    ipc.on('ReturnAppPath', (event, args) => {
+        appPath = args.Path;
+        console.log(appPath);
+    });
+};
 
 function DonloadFile(title, url, name) {
     document.getElementById('DialogContent').innerHTML = title;
@@ -34,14 +42,15 @@ function Unzip(title, name, filePath) {
                 if (args.Finish == true) {
                     document.getElementById('ConfirmBtn').removeAttribute('disabled');
                 }
-            })
+            });
         }
-    })
+    });
 }
+
 document.getElementById('ConfirmBtn').addEventListener('click', () => {
     document.getElementById('Progress').style.width = '0%';
     document.getElementById('ConfirmBtn').setAttribute('disabled', 'true');
-})
+});
 
 function FileCommand(title, path, other, cwd) {
     cmdDialog.open();
@@ -51,24 +60,24 @@ function FileCommand(title, path, other, cwd) {
         Other: other,
         Cwd: cwd
     });
-    ipc.on('FileCommandLog', (event, args) => {
+    ipc.once('FileCommandLog', (event, args) => {
         document.getElementById('CMDLog').innerHTML = args.Log;
         console.log(args.Log);
     });
-    ipc.on('FileCommandReturn', (event, args) => {
+    ipc.once('FileCommandReturn', (event, args) => {
         document.getElementById('CMDConfirm').removeAttribute('disabled');
         if (args.Return == 0) {
-            document.getElementById('CMDLog').innerHTML += 'success.'
+            document.getElementById('CMDLog').innerHTML += 'success.';
         } else {
             document.getElementById('CMDLog').innerHTML = 'download failed. exit with code ' + args.Return;
         }
-    })
+    });
 }
 
 document.getElementById('CMDConfirm').addEventListener('click', () => {
     document.getElementById('CMDLog').innerHTML = '';
     document.getElementById('CMDConfirm').setAttribute('disabled', 'true');
-})
+});
 
 document.getElementById('installJava').addEventListener('click', () => {
     DonloadFile(
@@ -81,7 +90,7 @@ document.getElementById('installJava').addEventListener('click', () => {
         'jdk.zip',
         'resources'
     );
-})
+});
 document.getElementById('installMongo').addEventListener('click', () => {
     DonloadFile(
         '正在下载MongoDB...',
@@ -93,7 +102,7 @@ document.getElementById('installMongo').addEventListener('click', () => {
         'mongo.zip',
         'resources'
     );
-})
+});
 document.getElementById('installGit').addEventListener('click', () => {
     DonloadFile(
         '正在下载Git...',
@@ -105,7 +114,7 @@ document.getElementById('installGit').addEventListener('click', () => {
         'git.zip',
         'resources/git'
     );
-})
+});
 document.getElementById('installGC').addEventListener('click', () => {
     FileCommand(
         '正在从Github拉取Grasscutter dev分支...',
@@ -113,7 +122,7 @@ document.getElementById('installGC').addEventListener('click', () => {
         'clone -b development https://ghproxy.com/https://github.com/Grasscutters/Grasscutter.git',
         ''
     );
-})
+});
 document.getElementById('installGC_R').addEventListener('click', () => {
     FileCommand(
         '正在从Github下载Grasscutter所需资源...',
@@ -121,4 +130,4 @@ document.getElementById('installGC_R').addEventListener('click', () => {
         'clone https://ghproxy.com/https://github.com/Koko-boya/Grasscutter_Resources.git',
         ''
     );
-})
+});

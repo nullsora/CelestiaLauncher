@@ -8,7 +8,7 @@ exports.initCmd = function (win) {
         let file = path.join(app.getAppPath(), 'resources', args.Path);
         let cwd = path.join(app.getAppPath(), 'resources', args.Cwd);
         let cmdArgs = args.Other.split(' ');
-        const child = spawn(file, cmdArgs, {
+        let child = spawn(file, cmdArgs, {
             cwd: cwd,
             shell: true,
             encoding: 'gbk'
@@ -18,12 +18,12 @@ exports.initCmd = function (win) {
                 Log: data.toString()
             });
         });
-        child.on('exit', (code, signal) => {
+        child.on('close', (code, signal) => {
             win.webContents.send('FileCommandReturn', {
                 Return: code
             });
         });
-    })
+    });
     ipcMain.on('DoSysCommand', (event, args) => {
         let cwd = path.join(app.getAppPath(), 'resources', args.Cwd);
         let run = cmd.runSync(`cd ${cwd} && ` + args.Command);
@@ -32,5 +32,5 @@ exports.initCmd = function (win) {
             Error: run.err,
             Stderr: run.stderr
         });
-    })
-}
+    });
+};
