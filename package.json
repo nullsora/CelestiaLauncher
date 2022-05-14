@@ -4,13 +4,15 @@
   "description": "A Launcher for Grasscutter",
   "main": "main.js",
   "scripts": {
-    "ele": "electron ."
+    "ele": "electron .",
+    "build": "electron-packager ./ Celestia-Launcher --out ../CLbuild --overwrite --platform=win32 --icon=./src/res/img/CL.ico"
   },
   "keywords": [],
   "author": "KL_kirito",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^18.2.2"
+    "electron": "^18.2.2",
+    "electron-packager": "^15.5.1"
   },
   "dependencies": {
     "decompress-zip": "^0.3.3",
