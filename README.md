@@ -2,7 +2,7 @@
 
 ------------
 
-[中文](https://github.com/KL-kirito/CelestiaLauncher/blob/patch-1/CN_README.md) | English
+[中文](https://github.com/KL-kirito/CelestiaLauncher/blob/master/CN_README.md) | English
 
 # Grasscutter Launcher
 
