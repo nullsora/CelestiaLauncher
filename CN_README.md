@@ -1,4 +1,4 @@
-![csl.jpg](https://s2.loli.net/2022/05/14/nKk4EIhb7pTjCzP.jpg)
+![csl.jpg](https://s2.loli.net/2022/05/14/7ajYoZDTyxrgRsN.jpg)
 
 ------------
 中文 | [English](https://github.com/KL-kirito/CelestiaLauncher/blob/master/README.md)
