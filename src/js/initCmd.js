@@ -1,12 +1,12 @@
 const { ipcMain, app } = require('electron');
-const { spawn, exec } = require('child_process');
+const { spawn } = require('child_process');
 const path = require('path');
 const cmd = require('node-cmd');
 
 exports.initCmd = function (win) {
     ipcMain.on('DoFileCommand', (event, args) => {
         let file = path.join(app.getAppPath(), 'resources', args.Path);
-        let cwd = path.join(app.getAppPath(), 'resources')
+        let cwd = path.join(app.getAppPath(), 'resources', args.Cwd);
         let cmdArgs = args.Other.split(' ');
         const child = spawn(file, cmdArgs, {
             cwd: cwd,
@@ -15,7 +15,7 @@ exports.initCmd = function (win) {
         });
         child.stdout.on('data', (data) => {
             win.webContents.send('FileCommandLog', {
-                Log: data
+                Log: data.toString()
             });
         });
         child.on('exit', (code, signal) => {
@@ -25,8 +25,8 @@ exports.initCmd = function (win) {
         });
     })
     ipcMain.on('DoSysCommand', (event, args) => {
-        let cwd = path.join(app.getAppPath(), 'resources');
-        let run = cmd.runSync(args.Command);
+        let cwd = path.join(app.getAppPath(), 'resources', args.Cwd);
+        let run = cmd.runSync(`cd ${cwd} && ` + args.Command);
         win.webContents.send('CommandReturn', {
             Return: run.data,
             Error: run.err,

@@ -1,5 +1,5 @@
 var ipc = require('electron').ipcRenderer;
-var $ = mdui.$;
+var shell = require('electron').shell;
 var dialog = new mdui.Dialog('#Download', { modal: true });
 var cmdDialog = new mdui.Dialog('#CMD', { modal: true });
 
@@ -38,13 +38,18 @@ function Unzip(title, name, filePath) {
         }
     })
 }
+document.getElementById('ConfirmBtn').addEventListener('click', () => {
+    document.getElementById('Progress').style.width = '0%';
+    document.getElementById('ConfirmBtn').setAttribute('disabled', 'true');
+})
 
-function FileCommand(title, path, other) {
+function FileCommand(title, path, other, cwd) {
     cmdDialog.open();
     document.getElementById('CMDContent').innerHTML = title;
     ipc.send('DoFileCommand', {
         Path: path,
-        Other: other
+        Other: other,
+        Cwd: cwd
     });
     ipc.on('FileCommandLog', (event, args) => {
         document.getElementById('CMDLog').innerHTML = args.Log;
@@ -53,26 +58,17 @@ function FileCommand(title, path, other) {
     ipc.on('FileCommandReturn', (event, args) => {
         document.getElementById('CMDConfirm').removeAttribute('disabled');
         if (args.Return == 0) {
-            document.getElementById('CMDLog').innerHTML = 'success.'
+            document.getElementById('CMDLog').innerHTML += 'success.'
         } else {
             document.getElementById('CMDLog').innerHTML = 'download failed. exit with code ' + args.Return;
         }
     })
 }
 
-function SyncSysCommand(title, command) {
-    cmdDialog.open();
-    document.getElementById('CMDContent').innerHTML = title;
-    ipc.send('DoSysCommand', {
-        Command: command
-    });
-    ipc.on('SysCommandReturn', (event, args) => {
-        document.getElementById('CMDLog').innerHTML = 'success. ' + args.Return;
-        console.log(args.Return);
-        console.error(args.Error);
-        console.log(args.Stderr);
-    })
-}
+document.getElementById('CMDConfirm').addEventListener('click', () => {
+    document.getElementById('CMDLog').innerHTML = '';
+    document.getElementById('CMDConfirm').setAttribute('disabled', 'true');
+})
 
 document.getElementById('installJava').addEventListener('click', () => {
     DonloadFile(
@@ -114,37 +110,15 @@ document.getElementById('installGC').addEventListener('click', () => {
     FileCommand(
         '正在从Github拉取Grasscutter dev分支...',
         'git/cmd/git.exe',
-        'clone -b development https://ghproxy.com/https://github.com/Grasscutters/Grasscutter.git'
+        'clone -b development https://ghproxy.com/https://github.com/Grasscutters/Grasscutter.git',
+        ''
     );
 })
 document.getElementById('installGC_R').addEventListener('click', () => {
     FileCommand(
-        '正在下载Grasscutter所需资源...',
+        '正在从Github下载Grasscutter所需资源...',
         'git/cmd/git.exe',
-        'clone https://ghproxy.com/https://github.com/Koko-boya/Grasscutter_Resources.git'
+        'clone https://ghproxy.com/https://github.com/Koko-boya/Grasscutter_Resources.git',
+        ''
     );
-})
-document.getElementById('configureGC').addEventListener('click', () => {
-    // possibly cause unresponsiveness
-    SyncSysCommand('创建文件夹...', 'mkdir .\\resources\\Grasscutter\\resources');
-    SyncSysCommand(
-        '复制resources...',
-        'xcopy /S /Q .\\resources\\Grasscutter_Resources\\Resources .\\resources\\Grasscutter\\resources'
-    );
-    SyncSysCommand(
-        '复制其他文件...',
-        'xcopy /S /Q .\\src\\res\\gc\\AvatarCostumeExcelConfigData.json .\\resources\\Grasscutter\\resources\\ExcelBinOutput\\AvatarCostumeExcelConfigData.json'
-    );
-    SyncSysCommand(
-        '复制其他文件...',
-        'xcopy /S /Q .\\src\\res\\gc\\Banners.json .\\resources\\Grasscutter\\data\\Banners.json'
-    );
-    SyncSysCommand(
-        '复制其他文件...',
-        'xcopy /S /Q .\\src\\res\\gc\\config.json .\\resources\\Grasscutter\\config.json'
-    );
-    SyncSysCommand(
-        '删除冗余文件...',
-        'del /S /Q .\\resources\\Grasscutter_Resources'
-    )
 })

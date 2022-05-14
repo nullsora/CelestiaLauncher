@@ -63,7 +63,7 @@
             </div>
             <div class="mdui-col-xs-8">
                 <div class="mdui-card mdui-hoverable">
-                    <div class="mdui-card-actions">
+                    <div class="mdui-card-content">
                         <ul class="mdui-list">
                             <li class="mdui-list-item mdui-ripple" id="installJava">
                                 <div class="mdui-list-item-content">Java</div>
@@ -85,46 +85,41 @@
                                 <div class="mdui-list-item-content">下载Grasscutter资源</div>
                                 <i class="mdui-icon material-icons">file_download</i>
                             </li>
-                            <li class="mdui-list-item mdui-ripple" id="configureGC">
-                                <div class="mdui-list-item-content">配置Grasscutter</div>
-                                <i class="mdui-icon material-icons">file_download</i>
-                            </li>
                         </ul>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <div class="mdui-dialog" id="Download">
-                <div class="mdui-dialog-title">下载中</div>
-                <div class="mdui-dialog-content">
-                    <div class="mdui-progress">
-                        <div id="Progress" class="mdui-progress-determinate" style="width: 0%;"></div>
-                    </div>
-                    <div id="DialogContent" class="mdui-m-t-1"></div>
-                </div>
-                <div class="mdui-dialog-actions">
-                    <button id="ConfirmBtn" class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent"
-                        mdui-dialog-confirm disabled>完成</button>
-                </div>
+    <div class="mdui-dialog" id="Download">
+        <div class="mdui-dialog-title">下载中</div>
+        <div class="mdui-dialog-content">
+            <div class="mdui-progress">
+                <div id="Progress" class="mdui-progress-determinate" style="width: 0%;"></div>
             </div>
+            <div id="DialogContent" class="mdui-m-t-1"></div>
+        </div>
+        <div class="mdui-dialog-actions">
+            <button id="ConfirmBtn" class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent"
+                mdui-dialog-confirm disabled>完成</button>
+        </div>
+    </div>
 
-            <div class="mdui-dialog" id="CMD">
-                <div class="mdui-dialog-title">下载中</div>
-                <div class="mdui-dialog-content">
-                    <div class="mdui-progress">
-                        <div class="mdui-progress-indeterminate"></div>
-                    </div>
-                    <div id="CMDContent" class="mdui-typo mdui-m-t-1">下载中</div>
-                    <div class="mdui-typo">
-                        <pre id="CMDLog"></pre>
-                    </div>
-                </div>
-                <div class="mdui-dialog-actions">
-                    <button id="CMDConfirm" class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent"
-                        mdui-dialog-confirm disabled>确定</button>
-                </div>
+    <div class="mdui-dialog" id="CMD">
+        <div class="mdui-dialog-title">执行中</div>
+        <div class="mdui-dialog-content">
+            <div class="mdui-progress">
+                <div class="mdui-progress-indeterminate"></div>
             </div>
-
+            <div id="CMDContent" class="mdui-typo mdui-m-t-1">下载中</div>
+            <div class="mdui-typo">
+                <pre id="CMDLog"></pre>
+            </div>
+        </div>
+        <div class="mdui-dialog-actions">
+            <button id="CMDConfirm" class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent"
+                mdui-dialog-confirm disabled>确定</button>
         </div>
     </div>
 

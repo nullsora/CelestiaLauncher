@@ -19,7 +19,7 @@ function createWindow() {
         }
     })
     mainWindow.loadFile('./src/index.html')
-    mainWindow.webContents.openDevTools()
+    // mainWindow.webContents.openDevTools()
     dl(mainWindow)
     unzip(mainWindow)
     cmd(mainWindow)
@@ -52,6 +52,6 @@ ipc.on('window-min', function () {
 })
 
 // Problems: 执行命令时应用无响应
-// TODO: 文件复制命令，打开bat文件，读写config
+// TODO: 读写config
 // TODO - 2: 实时命令面板（链接到cmd），手动配置环境
 // TODO - 3: 便捷的更改Grasscutter配置文件，查询ID
