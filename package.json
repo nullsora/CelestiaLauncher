@@ -1,11 +1,11 @@
 {
   "name": "celestia-launcher",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A Launcher for Grasscutter",
   "main": "main.js",
   "scripts": {
     "ele": "electron .",
-    "build": "electron-packager ./ Celestia-Launcher --out ../CLbuild --overwrite --platform=win32 --icon=./src/res/img/CL.ico"
+    "build": "electron-packager ./ Celestia-Launcher --out ./build --overwrite --platform=win32 --icon=./src/res/img/CL.ico"
   },
   "keywords": [],
   "author": "KL_kirito",

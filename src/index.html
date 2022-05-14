@@ -7,75 +7,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../node_modules/mdui/dist/css/mdui.min.css">
     <link rel="stylesheet" href="./css/style.css">
+    <link rel="shortcut icon" href="./res/img/CL.ico">
     <title>Celestia Launcher</title>
 </head>
 
-<body class="mdui-theme-layout-auto mdui-theme-primary-indigo mdui-theme-accent-indigo">
-    <header class="mdui-appbar mdui-appbar-inset dragline">
-        <div class="mdui-toolbar mdui-color-theme">
-            <a id="menu" class="mdui-btn mdui-btn-icon mdui-ripple">
-                <i class="mdui-icon material-icons" mdui-tooltip="{content: '菜单'}">menu</i>
-            </a>
-            <a class="mdui-typo-headline">Celestia Launcher</a>
-            <div class="mdui-toolbar-spacer"></div>
-            <a id="mini" class="mdui-btn mdui-btn-icon" mdui-tooltip="{content: '最小化'}">
-                <i class="mdui-icon material-icons">remove</i>
-            </a>
-            <a id="maxi" class="mdui-btn mdui-btn-icon" mdui-tooltip="{content: '最大化'}">
-                <i class="mdui-icon material-icons">airplay</i>
-            </a>
-            <a id="close" class="mdui-btn mdui-btn-icon" mdui-tooltip="{content: '关闭'}">
-                <i class="mdui-icon material-icons">close</i>
-            </a>
-        </div>
-    </header>
-    <div class="mdui-drawer mdui-drawer-close mdui-drawer-full-height" id="drawer">
-        <div class="mdui-list">
-            <li class="mdui-list-item mdui-ripple" id="link-main-page">
-                <i class="mdui-list-item-icon mdui-icon material-icons">apps</i>
-                <div class="mdui-list-item-content">主页</div>
-            </li>
-            <li class="mdui-list-item mdui-ripple" id="link-download">
-                <i class="mdui-list-item-icon mdui-icon material-icons">cloud_download</i>
-                <div class="mdui-list-item-content">下载</div>
-            </li>
-            <li class="mdui-list-item mdui-ripple" id="link-config">
-                <i class="mdui-list-item-icon mdui-icon material-icons">assignment</i>
-                <div class="mdui-list-item-content">配置</div>
-            </li>
-        </div>
-    </div>
+<body class="mdui-appbar-with-toolbar mdui-theme-primary-indigo mdui-theme-accent-indigo">
+    <div id="base"></div>
 
     <div class="mdui-container">
-        <div class="mdui-row mdui-m-t-2">
-            <div class="mdui-col-xs-4">
-                <div class="mdui-card mdui-hoverable">
-                    <div class="mdui-card-media">
-                        <img src="./res/img/Grasscutter.jpg" />
-                        <div class="mdui-card-media-covered mdui-card-media-covered-gradient">
-                            <div class="mdui-card-primary">
-                                <div class="mdui-card-primary-title">Celestia Launcher</div>
-                                <div class="mdui-card-primary-subtitle">天空岛启动器</div>
-                                <div class="mdui-card-primary-subtitle">Developed by KL_kirito</div>
-                            </div>
+        <div class="mdui-col-xs-4">
+            <div class="mdui-card mdui-hoverable">
+                <div class="mdui-card-media">
+                    <img src="./res/img/Grasscutter.jpg" />
+                    <div class="mdui-card-media-covered mdui-card-media-covered-gradient">
+                        <div class="mdui-card-primary">
+                            <div class="mdui-card-primary-title">Celestia Launcher</div>
+                            <div class="mdui-card-primary-subtitle">天空岛启动器</div>
+                            <div class="mdui-card-primary-subtitle">Developed by KL_kirito</div>
                         </div>
-                    </div>
-                    <div class="mdui-card-actions">
-                        <button id="LaunchGame" class="mdui-btn mdui-btn-raised mdui-color-theme-accent mdui-ripple"
-                            mdui-tooltip="{content: '启动！'}">
-                            启动游戏
-                        </button>
                     </div>
                 </div>
+                <div class="mdui-card-content">
+                    <div class="mdui-typo">
+                        选择Grasscutter文件：
+                        <select class="mdui-select" id="JarSelect" style="width: 100%;"></select>
+                    </div>
+                </div>
+                <div class="mdui-card-actions">
+                    <button id="LaunchGame" class="mdui-btn mdui-btn-raised mdui-color-theme-accent mdui-ripple"
+                        style="width: 100%;" mdui-tooltip="{content: '启动！'}">
+                        启动游戏
+                    </button>
+                </div>
             </div>
+        </div>
+        <div class="mdui-row mdui-m-t-2">
             <div class="mdui-col-xs-8">
                 <div class="mdui-card mdui-hoverable">
-                    <div class="mdui-card-content">
-                        <div class="mdui-typo">
-                            选择Grasscutter文件：
-                            <select class="mdui-select" id="JarSelect" style="width: 100%;"></select>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
