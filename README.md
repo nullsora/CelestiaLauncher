@@ -24,5 +24,6 @@ There are two buttons at the `配置` page.
 
 After compile, you can come back to the main page and run.
 
+**This launcher won't change your proxy settings. You should set your proxy manually.**
 
 Please issue any bug, and I will fix it as soon as possible. :P
