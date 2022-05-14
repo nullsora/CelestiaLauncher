@@ -1,7 +1,8 @@
 var ele = require('electron');
-var dl = require('./src/js/initDownload').initDownload;
-var unzip = require('./src/js/initUnzip').initUnzip;
-var cmd = require('./src/js/initCmd').initCmd;
+var initDownload = require('./src/js/initDownload').initDownload;
+var initUnzip = require('./src/js/initUnzip').initUnzip;
+var initCMD = require('./src/js/initCmd').initCmd;
+var initPath = require('./src/js/initPath').initPath;
 
 var app = ele.app;
 var BrowserWindow = ele.BrowserWindow;
@@ -19,10 +20,11 @@ function createWindow() {
         }
     })
     mainWindow.loadFile('./src/index.html')
-    // mainWindow.webContents.openDevTools()
-    dl(mainWindow)
-    unzip(mainWindow)
-    cmd(mainWindow)
+    mainWindow.webContents.openDevTools()
+    initDownload(mainWindow)
+    initUnzip(mainWindow)
+    initCMD(mainWindow)
+    initPath(mainWindow)
     mainWindow.on('closed', () => {
         mainWindow = null
     })

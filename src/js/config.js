@@ -3,6 +3,15 @@ var shell = require('electron').shell;
 var path = require('path');
 var fs = require('fs');
 var configDialog = new mdui.Dialog('#Config', { modal: true });
+var appPath;
+
+window.onload = function () {
+    ipc.send('GetAppPath', {});
+    ipc.on('ReturnAppPath', (event, args) => {
+        appPath = args.Path;
+        console.log(appPath);
+    });
+}
 
 function FileCommand(title, path, other, cwd) {
     configDialog.open();
@@ -61,7 +70,7 @@ document.getElementById('GrasscutterUpdate').addEventListener('click', () => {
 })
 
 document.getElementById('GrasscutterCompile').addEventListener('click', () => {
-    let jdkPath = path.resolve('.\\resources\\jdk-17.0.3+7');
+    let jdkPath = path.join(appPath, 'resources\\jdk-17.0.3+7');
     SyncSysCommand(
         '正在编译为Jar File...如果未响应请不要关闭',
         'set JAVA_HOME=' + jdkPath + ' && .\\gradlew jar',
@@ -71,9 +80,9 @@ document.getElementById('GrasscutterCompile').addEventListener('click', () => {
 })
 
 document.getElementById('GrasscutterPrecompile').addEventListener('click', () => {
-    let jdkPath = path.resolve('.\\resources\\jdk-17.0.3+7');
-    let gradlewBatPath = path.resolve('.\\resources\\Grasscutter\\gradlew.bat');
-    let gradlewBatClonePath = path.resolve('.\\resources\\Grasscutter\\gradlewclone.bat');
+    let jdkPath = path.join(appPath, 'resources/jdk-17.0.3+7');
+    let gradlewBatPath = path.join(appPath, 'resources\\Grasscutter\\gradlew.bat');
+    let gradlewBatClonePath = path.join(appPath, 'resources\\Grasscutter\\gradlewclone.bat');
     let gradlewBatContent;
     try {
         fs.accessSync(gradlewBatClonePath);
