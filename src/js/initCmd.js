@@ -1,7 +1,6 @@
 const { ipcMain, app } = require('electron');
-const { spawn } = require('child_process');
+const { spawn, exec } = require('child_process');
 const path = require('path');
-const cmd = require('node-cmd');
 
 exports.initCmd = function (win) {
     ipcMain.on('DoFileCommand', (event, args) => {
@@ -26,11 +25,9 @@ exports.initCmd = function (win) {
     });
     ipcMain.on('DoSysCommand', (event, args) => {
         let cwd = path.join(app.getAppPath(), 'resources', args.Cwd);
-        let command = 'cd ' + cwd;
-        for (i in args.Command) {
-            command += (' && ' + args.Command[i]);
-        }
-        cmd.run(command, function (err, data, stderr) {
+        let command = 'chcp 65001 && ' + args.Command.join(' && ');
+        console.log(command);
+        exec(command, { cwd: cwd, maxBuffer: Infinity }, (err, data, stderr) => {
             win.webContents.send('SysCommandReturn', {
                 Return: data,
                 Error: err,

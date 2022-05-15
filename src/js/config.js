@@ -44,6 +44,7 @@ function AsyncSysCommand(title, command, cwd) {
     });
     ipc.once('SysCommandReturn', (event, args) => {
         document.getElementById('ConfigConfirm').removeAttribute('disabled');
+        console.log('return');
         if (args.Error == null) {
             document.getElementById('ConfigLog').innerHTML = 'success. ' + args.Return;
         } else {
@@ -100,9 +101,9 @@ document.getElementById('ConfigureGC').addEventListener('click', () => {
         '正在配置Grasscutter...',
         [
             'mkdir .\\Grasscutter\\resources',
-            'xcopy /Q /H /E .\\Grasscutter_Resources\\Resources .\\Grasscutter\\resources',
-            'xcopy /Q /H /E .\\GC_res_fix\\AvatarCostumeExcelConfigData.json .\\Grasscutter\\resources\\ExcelBinOutput\\AvatarCostumeExcelConfigData.json',
-            'xcopy /Q /H /E .\\GC_res_fix\\Banners.json .\\Grasscutter\\data\\Banners.json'
+            'xcopy /Q /H /E /Y .\\Grasscutter_Resources\\Resources .\\Grasscutter\\resources',
+            'xcopy /H /E /Y .\\GC_res_fix\\AvatarCostumeExcelConfigData.json .\\Grasscutter\\resources\\ExcelBinOutput\\AvatarCostumeExcelConfigData.json',
+            'xcopy /H /E /Y .\\GC_res_fix\\Banners.json .\\Grasscutter\\data\\Banners.json'
         ],
         ''
     );

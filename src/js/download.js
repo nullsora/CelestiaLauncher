@@ -30,6 +30,7 @@ function Unzip(title, name, filePath) {
     document.getElementById('Progress').style.width = '0%';
     ipc.on('Progress', (event, args) => {
         if (args.Progress >= 100) {
+            ipc.removeAllListeners('Progress');
             document.getElementById('DialogContent').innerHTML = title;
             ipc.send('Unzip', {
                 fName: name,
@@ -38,10 +39,12 @@ function Unzip(title, name, filePath) {
             ipc.on('UnzipProgress', (event, args) => {
                 document.getElementById('Progress').style.width = args.Progress + '%';
             });
-            ipc.on('UnzipFinish', (event, args) => {
+            ipc.once('UnzipFinish', (event, args) => {
                 if (args.Finish == true) {
                     document.getElementById('ConfirmBtn').removeAttribute('disabled');
+                    document.getElementById('DialogContent').innerHTML = '已完成.';
                 }
+                ipc.removeAllListeners('UnzipProgress');
             });
         }
     });
