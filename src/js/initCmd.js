@@ -26,11 +26,16 @@ exports.initCmd = function (win) {
     });
     ipcMain.on('DoSysCommand', (event, args) => {
         let cwd = path.join(app.getAppPath(), 'resources', args.Cwd);
-        let run = cmd.runSync(`cd ${cwd} && ` + args.Command);
-        win.webContents.send('CommandReturn', {
-            Return: run.data,
-            Error: run.err,
-            Stderr: run.stderr
+        let command = 'cd ' + cwd;
+        for (i in args.Command) {
+            command += (' && ' + args.Command[i]);
+        }
+        cmd.run(command, function (err, data, stderr) {
+            win.webContents.send('SysCommandReturn', {
+                Return: data,
+                Error: err,
+                Stderr: stderr
+            });
         });
     });
 };

@@ -23,19 +23,19 @@ window.addEventListener('load', () => {
             </a>
         </div>
     </div>
-    <div class="mdui-drawer mdui-drawer-close mdui-color-white" id="drawer">
+    <div class="mdui-drawer mdui-drawer-right mdui-hoverable" id="drawer">
         <div class="mdui-list">
             <li class="mdui-list-item mdui-ripple" id="link-main-page">
-                <i class="mdui-list-item-avatar mdui-icon material-icons">apps</i>
                 <div class="mdui-list-item-content">主页</div>
+                <i class="mdui-list-item-icon mdui-icon material-icons">apps</i>
             </li>
             <li class="mdui-list-item mdui-ripple" id="link-download">
-                <i class="mdui-list-item-avatar mdui-icon material-icons">cloud_download</i>
                 <div class="mdui-list-item-content">下载</div>
+                <i class="mdui-list-item-icon mdui-icon material-icons">cloud_download</i>
             </li>
             <li class="mdui-list-item mdui-ripple" id="link-config">
-                <i class="mdui-list-item-avatar mdui-icon material-icons">assignment</i>
                 <div class="mdui-list-item-content">配置</div>
+                <i class="mdui-list-item-icon mdui-icon material-icons">assignment</i>
             </li>
         </div>
     </div>`;
@@ -53,13 +53,13 @@ window.addEventListener('load', () => {
     });
 
     document.getElementById('link-main-page').addEventListener('click', () => {
-        setTimeout(window.open('./index.html', '_self'), 1500);
+        setTimeout(window.open('./index.html', '_self'), 2000);
     });
     document.getElementById('link-download').addEventListener('click', () => {
-        setTimeout(window.open('./download.html', '_self'), 1500);
+        setTimeout(window.open('./download.html', '_self'), 2000);
     });
     document.getElementById('link-config').addEventListener('click', () => {
-        setTimeout(window.open('./config.html', '_self'), 1500);
+        setTimeout(window.open('./config.html', '_self'), 2000);
     });
 
 

@@ -18,6 +18,10 @@ Follow these steps to launch:
 3. Enter `配置` page，Press 「配置 Grasscutter」and「Grasscutter 编译前准备」
 
 
+## Update
+
+If you want to update without downloading files again, you can keep the `resources/app/resources` folder.
+
 ## Compile & Run
 
 There are two buttons at the `配置` page.

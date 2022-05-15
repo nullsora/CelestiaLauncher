@@ -11,7 +11,7 @@
     <title>Celestia Launcher</title>
 </head>
 
-<body class="mdui-appbar-with-toolbar mdui-theme-primary-indigo mdui-theme-accent-indigo">
+<body class="mdui-appbar-with-toolbar mdui-drawer-body-right mdui-theme-primary-indigo mdui-theme-accent-indigo">
     <div id="base"></div>
 
     <div class="mdui-container">
@@ -28,10 +28,6 @@
                         </div>
                     </div>
                     <div class="mdui-card-actions">
-                        <button id="ReturnHome" class="mdui-btn mdui-btn-raised mdui-color-theme-accent mdui-ripple"
-                            mdui-tooltip="{content: '返回主页'}">
-                            返回主页
-                        </button>
                         <button id="GrasscutterUpdate" class="mdui-btn mdui-btn-icon mdui-ripple mdui-float-right"
                             mdui-tooltip="{content: '更新Grasscutter'}">
                             <i class="mdui-icon material-icons">update</i>
@@ -55,13 +51,15 @@
                                 <div class="mdui-list-item-content">Grasscutter编译前准备</div>
                                 <i class="mdui-icon material-icons">developer_board</i>
                             </li>
+                            <li class="mdui-divider"></li>
                             <li class="mdui-list-item">
                                 <div class="mdui-list-item-content mdui-textfield mdui-textfield-floating-label">
                                     <label class="mdui-textfield-label">在此输入要切换的分支名，如：development</label>
                                     <input class="mdui-textfield-input" type="text" id="BranchInput" />
                                 </div>
-                                <button class="mdui-btn mdui-btn-icon mdui-ripple mdui-float-right" id="ChangeBranch">
-                                    <i class="mdui-text-color-theme-accent mdui-icon material-icons">directions_run</i>
+                                <button class="mdui-btn mdui-btn-icon mdui-ripple mdui-float-right" id="ChangeBranch"
+                                    mdui-tooltip="{content:'切换分支'}">
+                                    <i class="mdui-text-color-theme-accent mdui-icon material-icons">autorenew</i>
                                 </button>
                             </li>
                         </ul>

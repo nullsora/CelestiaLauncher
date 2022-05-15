@@ -2,3 +2,5 @@ node_modules
 build
 resources/git
 resources/Grasscutter
+resources/Grasscutter_Resources
+resources/jdk-17.0.3+7
