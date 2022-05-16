@@ -1,7 +1,7 @@
 const { ipcMain, app } = require('electron');
 const path = require('path');
-const cmd = require('node-cmd');
 const unZip = require('decompress-zip');
+const { exec } = require('child_process');
 
 exports.initUnzip = function (win) {
     let UnzipFile = {
@@ -25,10 +25,10 @@ exports.initUnzip = function (win) {
             win.webContents.send('UnzipProgress', { Progress: progress });
         });
         unzipper.on('extract', function (log) {
-            win.webContents.send('UnzipFinish', { Finish: true })
-            cmd.runSync('del /S /Q ' + fPath);
+            win.webContents.send('UnzipFinish', { Finish: true });
+            exec('del /S /Q ' + fPath, () => { });
             Reset();
             console.log('Finished extracting');
         });
     });
-}
+};
