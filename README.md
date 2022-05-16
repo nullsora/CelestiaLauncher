@@ -15,7 +15,7 @@ Celestia Launcher 可以帮您下载Grasscutter的全部依赖和资源，并一
 
 ## 特性
 
-- [x] 下载依赖
+- [x] 便捷且安全的下载依赖
 - [x] 启动Grasscutter
 - [x] 从github更新Grasscutter并可编译
 - [x] 允许使用系统环境变量

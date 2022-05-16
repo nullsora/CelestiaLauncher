@@ -1,12 +1,16 @@
 var ipc = require('electron').ipcRenderer;
 var path = require('path');
+
 var confPath = 'conf/config.json';
-var appPath, launcherConfig;
+var appPath, launcherConfig, stats;
+
 var AutoUpdate = document.getElementById('AutoUpdate'),
     UseMongoService = document.getElementById('UseMongoService'),
     UseJDKPath = document.getElementById('UseJDKPath'),
     UseGitPath = document.getElementById('UseGitPath');
+
 var configDialog = new mdui.Dialog('#Config', { modal: true });
+
 var configContent = document.getElementById('ConfigContent'),
     configConfirm = document.getElementById('ConfigConfirm'),
     configLog = document.getElementById('ConfigLog');
@@ -53,6 +57,8 @@ window.onload = function () {
         launcherConfig.UseMongoService ? UseMongoService.setAttribute('checked', true) : {};
         launcherConfig.UseJDKPath ? UseJDKPath.setAttribute('checked', true) : {};
         launcherConfig.UseGitPath ? UseGitPath.setAttribute('checked', true) : {};
+        ipc.send('GetStats', {});
+        ipc.once('StatsReturn', (event, args) => { stats = args.Stats; });
     });
 };
 
@@ -100,6 +106,23 @@ UseGitPath.addEventListener('click', () => {
     }
 });
 
+function RemoveAll() {
+    let commands = [];
+    if (stats.hasJDK) { commands.push('rd /q /s .\\jdk17.0.3+7'); }
+    if (stats.hasMongo) {
+        commands.push('rd /q /s .\\mongodb-win32-x86_64-windows-5.0.8\\bin');
+        commands.push('del /q /s .\\mongodb-win32-x86_64-windows-5.0.8\\data\\*.*');
+    }
+    if (stats.hasGit) { commands.push('rd /q /s .\\git'); }
+    if (stats.hasGC) { commands.push('rd /q /s .\\Grasscutter'); }
+    if (stats.hasGCR) { commands.push('rd /q /s .\\Grasscutter_Resources'); }
+    AsyncSysCommand(
+        '正在删除全部内容...',
+        commands,
+        ''
+    )
+}
+
 document.getElementById('ResetConfig').addEventListener('click', () => {
     ipc.send('ReadConf', { Path: 'conf/defaultconfig.json' });
     ipc.once('ConfContent', (event, args) => {
@@ -108,12 +131,12 @@ document.getElementById('ResetConfig').addEventListener('click', () => {
     });
 });
 
-document.getElementById('ClearAll').addEventListener('click', () => {
+document.getElementById('RemoveAll').addEventListener('click', () => {
     mdui.snackbar({
         message: '您确定要删除所有已下载资源吗？',
         buttonText: '确定',
         onButtonClick: function () {
-            mdui.alert('还没做呢（');
+            RemoveAll();
         }
     });
 });

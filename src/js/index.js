@@ -40,7 +40,7 @@ window.onload = function () {
     ipc.send('ReadConf', { Path: confPath });
     ipc.once('ConfContent', (event, args) => {
         config = args.Obj;
-        setInterval(UpdateStats(), 500);
+        UpdateStats();
     });
 };
 
