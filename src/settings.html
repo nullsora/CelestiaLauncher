@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../node_modules/mdui/dist/css/mdui.min.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="shortcut icon" href="./res/img/CL.ico">
+    <title>Celestia Launcher</title>
+</head>
+
+<body class="mdui-appbar-with-toolbar mdui-drawer-body-right mdui-theme-primary-indigo mdui-theme-accent-indigo">
+    <div id="base"></div>
+
+    <div class="mdui-container">
+        <div class="mdui-row mdui-m-t-2">
+            <div class="mdui-col-xs-4">
+                <div class="mdui-card mdui-hoverable">
+                    <div class="mdui-card-media">
+                        <img src="./res/img/Settings.jpg" />
+                        <div class="mdui-card-media-covered mdui-card-media-covered-gradient">
+                            <div class="mdui-card-primary">
+                                <div class="mdui-card-primary-title">偏好设置</div>
+                                <div class="mdui-card-primary-subtitle">设置各种参数</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mdui-col-xs-8">
+                <div class="mdui-card mdui-hoverable">
+                    <div class="mdui-card-header" id="SettingHead">
+                        <i class="mdui-card-header-avatar mdui-icon material-icons">settings_applications</i>
+                        <div class="mdui-card-header-title">启动器设置</div>
+                        <div class="mdui-card-header-subtitle">有关启动器的一些选项</div>
+                    </div>
+                    <div id="SettingList">
+                        <div class="mdui-card-content">
+                            <ul class="mdui-list">
+                                <li class="mdui-list-item mdui-ripple">
+                                    <i class="mdui-list-item-icon mdui-icon material-icons">autorenew</i>
+                                    <div class="mdui-list-item-content">自动更新</div>
+                                    <label class="mdui-switch">
+                                        <input type="checkbox" id="AutoUpdate" />
+                                        <i class="mdui-switch-icon"></i>
+                                    </label>
+                                </li>
+                                <li class="mdui-list-item mdui-ripple">
+                                    <i class="mdui-list-item-icon mdui-icon material-icons">adjust</i>
+                                    <div class="mdui-list-item-content">使用系统MongoDB服务</div>
+                                    <label class="mdui-switch">
+                                        <input type="checkbox" id="UseMongoService" />
+                                        <i class="mdui-switch-icon"></i>
+                                    </label>
+                                </li>
+                                <li class="mdui-list-item mdui-ripple">
+                                    <i class="mdui-list-item-icon mdui-icon material-icons">adjust</i>
+                                    <div class="mdui-list-item-content">使用系统JDK环境变量</div>
+                                    <label class="mdui-switch">
+                                        <input type="checkbox" id="UseJDKPath" />
+                                        <i class="mdui-switch-icon"></i>
+                                    </label>
+                                </li>
+                                <li class="mdui-list-item mdui-ripple">
+                                    <i class="mdui-list-item-icon mdui-icon material-icons">adjust</i>
+                                    <div class="mdui-list-item-content">使用系统Git环境变量</div>
+                                    <label class="mdui-switch">
+                                        <input type="checkbox" id="UseGitPath" />
+                                        <i class="mdui-switch-icon"></i>
+                                    </label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../node_modules/mdui/dist/js/mdui.min.js"></script>
+    <script src="./js/settings.js"></script>
+    <script src="./js/script.js"></script>
+</body>
+
+</html>

@@ -2,53 +2,61 @@ var ipc = require('electron').ipcRenderer;
 var shell = require('electron').shell;
 var path = require('path');
 var fs = require('fs');
-var configDialog = new mdui.Dialog('#Config', { modal: true });
+var config, confPath = 'conf/config.json';
 var appPath;
+var configDialog = new mdui.Dialog('#Config', { modal: true });
+var configContent = document.getElementById('ConfigContent'),
+    configConfirm = document.getElementById('ConfigConfirm'),
+    configLog = document.getElementById('ConfigLog');
 
 window.onload = function () {
     ipc.send('GetAppPath', {});
-    ipc.on('ReturnAppPath', (event, args) => {
+    ipc.once('ReturnAppPath', (event, args) => {
         appPath = args.Path;
         console.log(appPath);
+    });
+    ipc.send('ReadConf', { Path: confPath });
+    ipc.once('ConfContent', (event, args) => {
+        config = args.Obj;
     });
 };
 
 function FileCommand(title, path, other, cwd) {
     configDialog.open();
-    document.getElementById('ConfigContent').innerHTML = title;
+    configContent.innerHTML = title;
     ipc.send('DoFileCommand', {
         Path: path,
         Other: other,
         Cwd: cwd
     });
     ipc.once('FileCommandLog', (event, args) => {
-        document.getElementById('ConfigLog').innerHTML = args.Log;
+        configLog.innerHTML = args.Log;
         console.log(args.Log);
     });
     ipc.once('FileCommandReturn', (event, args) => {
-        document.getElementById('ConfigConfirm').removeAttribute('disabled');
+        configConfirm.removeAttribute('disabled');
         if (args.Return == 0) {
-            document.getElementById('ConfigLog').innerHTML += 'success.';
+            configLog.innerHTML += 'success.';
         } else {
-            document.getElementById('ConfigLog').innerHTML = 'execute failed. exit with code ' + args.Return;
+            configLog.innerHTML = 'execute failed. exit with code ' + args.Return;
         }
     });
 }
 
 function AsyncSysCommand(title, command, cwd) {
     configDialog.open();
-    document.getElementById('ConfigContent').innerHTML = title;
+    configContent.innerHTML = title;
     ipc.send('DoSysCommand', {
         Command: command,
         Cwd: cwd
     });
     ipc.once('SysCommandReturn', (event, args) => {
-        document.getElementById('ConfigConfirm').removeAttribute('disabled');
+        configConfirm.removeAttribute('disabled');
         console.log('return');
         if (args.Error == null) {
-            document.getElementById('ConfigLog').innerHTML = 'success. ' + args.Return;
+            configLog.innerHTML = 'success. ' + args.Return;
         } else {
-            document.getElementById('ConfigLog').innerHTML = 'error.\n' + args.Error;
+            configLog.innerHTML = 'error.\n' + args.Error;
         }
         console.log(args.Return);
         console.error(args.Error);
@@ -56,15 +64,15 @@ function AsyncSysCommand(title, command, cwd) {
     });
 }
 
-document.getElementById('ConfigConfirm').addEventListener('click', () => {
-    document.getElementById('ConfigConfirm').setAttribute('disabled', 'true');
-    document.getElementById('ConfigLog').innerHTML = '';
+configConfirm.addEventListener('click', () => {
+    configConfirm.setAttribute('disabled', 'true');
+    configLog.innerHTML = '';
 });
 
 document.getElementById('GrasscutterUpdate').addEventListener('click', () => {
     FileCommand(
         '正在从github拉取更新...',
-        'git/cmd/git.exe',
+        config.UseGitPath ? 'git' : 'git/cmd/git.exe',
         'pull',
         'Grasscutter'
     );
@@ -74,7 +82,9 @@ document.getElementById('GrasscutterCompile').addEventListener('click', () => {
     let jdkPath = path.join(appPath, 'resources\\jdk-17.0.3+7');
     AsyncSysCommand(
         '正在编译为Jar File...',
-        ['set JAVA_HOME=' + jdkPath, '.\\gradlew jar'],
+        config.UseJDKPath ?
+            ['set JAVA_HOME=' + jdkPath, '.\\gradlew jar'] :
+            ['.\\gradlew jar'],
         'Grasscutter'
     );
 });
@@ -93,7 +103,7 @@ document.getElementById('GrasscutterPrecompile').addEventListener('click', () =>
     }
     fs.writeFileSync(gradlewBatPath, 'set JAVA_HOME=' + jdkPath + '\n');
     fs.appendFileSync(gradlewBatPath, gradlewBatContent);
-    shell.openPath(gradlewBatPath);
+    shell.openPath(config.UseJDKPath ? gradlewBatClonePath : gradlewBatPath);
 });
 
 document.getElementById('ConfigureGC').addEventListener('click', () => {
@@ -102,8 +112,7 @@ document.getElementById('ConfigureGC').addEventListener('click', () => {
         [
             'mkdir .\\Grasscutter\\resources',
             'xcopy /Q /H /E /Y .\\Grasscutter_Resources\\Resources .\\Grasscutter\\resources',
-            'xcopy /H /E /Y .\\GC_res_fix\\AvatarCostumeExcelConfigData.json .\\Grasscutter\\resources\\ExcelBinOutput\\AvatarCostumeExcelConfigData.json',
-            'xcopy /H /E /Y .\\GC_res_fix\\Banners.json .\\Grasscutter\\data\\Banners.json'
+            'xcopy /H /E /Y .\\GC_res_fix\\AvatarCostumeExcelConfigData.json .\\Grasscutter\\resources\\ExcelBinOutput\\AvatarCostumeExcelConfigData.json'
         ],
         ''
     );
@@ -114,7 +123,7 @@ document.getElementById('ChangeBranch').addEventListener('click', () => {
     console.log(branchName);
     FileCommand(
         '正在切换分支到' + branchName,
-        'git/cmd/git.exe',
+        config.UseGitPath ? 'git' : 'git/cmd/git.exe',
         'checkout ' + branchName,
         'Grasscutter'
     );

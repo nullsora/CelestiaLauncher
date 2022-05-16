@@ -16,7 +16,7 @@ window.addEventListener('load', () => {
                 <i class="mdui-icon material-icons">remove</i>
             </a>
             <a id="maxi" class="mdui-btn mdui-btn-icon" mdui-tooltip="{content: '最大化'}">
-                <i class="mdui-icon material-icons">airplay</i>
+                <i class="mdui-icon material-icons">crop_3_2</i>
             </a>
             <a id="close" class="mdui-btn mdui-btn-icon" mdui-tooltip="{content: '关闭'}">
                 <i class="mdui-icon material-icons">close</i>
@@ -36,6 +36,10 @@ window.addEventListener('load', () => {
             <li class="mdui-list-item mdui-ripple" id="link-config">
                 <div class="mdui-list-item-content">配置</div>
                 <i class="mdui-list-item-icon mdui-icon material-icons">assignment</i>
+            </li>
+            <li class="mdui-list-item mdui-ripple" id="link-settings">
+                <div class="mdui-list-item-content">偏好设置</div>
+                <i class="mdui-list-item-icon mdui-icon material-icons">settings</i>
             </li>
         </div>
     </div>`;
@@ -61,7 +65,9 @@ window.addEventListener('load', () => {
     document.getElementById('link-config').addEventListener('click', () => {
         setTimeout(window.open('./config.html', '_self'), 2000);
     });
-
+    document.getElementById('link-settings').addEventListener('click', () => {
+        setTimeout(window.open('./settings.html', '_self'), 2000);
+    });
 
     $('#menu').on('click', function () {
         Drawer.toggle();

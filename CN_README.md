@@ -36,6 +36,8 @@ Celestia Launcher目前仅可在Windows平台使用。
 ## 更新启动器
 如果您在更新后不想再重新下载一遍文件，那么您应当保留`resources/app/resources`目录下的`jdk17.0.3+7`,`git`,`mongodb-win32-x86_64-windows-5.0.8`,`Grasscutter`和`Grasscutter_Resources`文件夹。
 
+为了完全更新，您最好不要保留除上述文件夹外的其他文件和目录。
+
 ## 将要加入的特性：
 手动配置环境；
 应用内命令面板；

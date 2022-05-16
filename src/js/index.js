@@ -5,11 +5,12 @@ var fs = require('fs');
 var $ = mdui.$;
 var jarSelect = new mdui.Select('#JarSelect');
 var appPath;
+var config, confPath = 'conf/config.json';
 var jarPath = [];
 
 window.onload = function () {
     ipc.send('GetAppPath', {});
-    ipc.on('ReturnAppPath', (event, args) => {
+    ipc.once('ReturnAppPath', (event, args) => {
         appPath = args.Path;
         console.log(appPath);
         let filePath = path.join(appPath, 'resources\\Grasscutter');
@@ -37,6 +38,10 @@ window.onload = function () {
             }
         });
     });
+    ipc.send('ReadConf', { Path: confPath });
+    ipc.once('ConfContent', (event, args) => {
+        config = args.Obj;
+    });
 };
 
 document.getElementById('LaunchGame').addEventListener('click', () => {
@@ -44,9 +49,11 @@ document.getElementById('LaunchGame').addEventListener('click', () => {
     let launchPath = path.join(appPath, 'resources\\launchgame.bat');
     let jdkPath = path.join(appPath, 'resources\\jdk-17.0.3+7\\bin\\java.exe');
     let value = document.getElementById('JarSelect').selectedIndex;
-    let launchContent = '@echo off\ncd .\\Grasscutter\\\n' + jdkPath + ' -jar ' + jarPath[value];
+    let launchContent = '@echo off\ncd .\\Grasscutter\\\n' +
+        config.UseJDKPath ? 'java' : jdkPath +
+        ' -jar ' + jarPath[value];
     fs.writeFileSync(launchPath, launchContent);
-    shell.openPath(mongoPath);
+    config.UseMongoService ? {} : shell.openPath(mongoPath);
     setTimeout(() => {
         shell.openPath(launchPath);
     }, 1000);

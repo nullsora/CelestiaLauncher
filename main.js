@@ -3,7 +3,7 @@ const initDownload = require('./src/js/initDownload').initDownload;
 const initUnzip = require('./src/js/initUnzip').initUnzip;
 const initCMD = require('./src/js/initCmd').initCmd;
 const initPath = require('./src/js/initPath').initPath;
-const initConf = require('./src/js/initConfig').initConfig;
+const initJson = require('./src/js/initJson').initJson;
 
 var app = ele.app;
 var BrowserWindow = ele.BrowserWindow;
@@ -26,7 +26,7 @@ function createWindow() {
     initUnzip(mainWindow);
     initCMD(mainWindow);
     initPath(mainWindow);
-    initConf(mainWindow);
+    initJson(mainWindow);
     mainWindow.on('closed', () => {
         mainWindow = null;
     });

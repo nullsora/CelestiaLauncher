@@ -5,7 +5,7 @@ var appPath;
 
 window.onload = function () {
     ipc.send('GetAppPath', {});
-    ipc.on('ReturnAppPath', (event, args) => {
+    ipc.once('ReturnAppPath', (event, args) => {
         appPath = args.Path;
         console.log(appPath);
     });

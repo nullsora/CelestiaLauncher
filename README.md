@@ -22,6 +22,8 @@ Follow these steps to launch:
 
 If you want to update without downloading files again, you should keep the `jdk17.0.3+7`,`git`,`mongodb-win32-x86_64-windows-5.0.8`,`Grasscutter`and`Grasscutter_Resources` folders in the `resources/app/resources` folder.
 
+In order to update completely, please delete the other files and folders.
+
 ## Compile & Run
 
 There are two buttons at the `配置` page.
