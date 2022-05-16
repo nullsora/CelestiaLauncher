@@ -20,15 +20,22 @@ Celestia Launcher目前仅可在Windows平台使用。
 ## 配置顺序：
 请按照以下步骤完成Grasscutter的配置安装：
 1. 点击左上角按钮，进入下载页面；
-2. 下载Java、MongoDB以及Git；
+2. 下载Java、MongoDB以及Git，或者在偏好设置页面启用系统环境（如果您之前安装过）；
 3. 下载Grasscutter和Grasscutter资源；
+
 **请确保在此时Git已经下载完成！**
+
 4. 进入配置页面，依次点击`配置Grasscutter`和`Grasscutter编译前准备`；
+
 **请确保已经下载了Grasscutter和资源！**
+
 到这里准备工作便全部完成了。
 
 ## 更新，编译和运行
 配置页面中的两个按钮可以方便的拉取更新和编译Grasscutter。
+
+您也可以在配置页面方便的切换Grasscutter的分支。
+
 编译完成后，即可回到主页并运行。
 
 **请注意：本启动器并不会帮助您设置代理。您可能需要手动设置。**
