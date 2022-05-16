@@ -4,8 +4,7 @@ var path = require('path');
 var fs = require('fs');
 var $ = mdui.$;
 var jarSelect = new mdui.Select('#JarSelect');
-var appPath;
-var config, confPath = 'conf/config.json';
+var appPath, stats, config, confPath = 'conf/config.json';
 var jarPath = [];
 
 window.onload = function () {
@@ -41,8 +40,21 @@ window.onload = function () {
     ipc.send('ReadConf', { Path: confPath });
     ipc.once('ConfContent', (event, args) => {
         config = args.Obj;
+        setInterval(UpdateStats(), 500);
     });
 };
+
+function UpdateStats() {
+    ipc.send('GetStats', {});
+    ipc.once('StatsReturn', (event, args) => {
+        stats = args.Stats;
+        if ((stats.hasJDK || config.UseJDKPath) && (stats.hasMongo || config.UseMongoService)) {
+            document.getElementById('LaunchGame').removeAttribute('disabled');
+        } else {
+            document.getElementById('LaunchGame').setAttribute('disabled', 'true');
+        }
+    });
+}
 
 document.getElementById('LaunchGame').addEventListener('click', () => {
     let mongoPath = path.join(appPath, 'resources\\launchmongo.bat');

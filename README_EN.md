@@ -4,19 +4,20 @@
 
 [中文](https://github.com/KL-kirito/CelestiaLauncher/blob/master/README.md) | English
 
-# Grasscutter Launcher
+# Celestia Launcher
 
 ## Usage
+
 Celestia Launcher supports Windows platform.
 Download .zip file in Release page (make sure you have enough disk spaces), then decompress it and run .exe file.
 
-
 ## Getting Start
+
 Follow these steps to launch:
+
 1. Press the `下载` button left-top to download
 2. Download Java, MongoDB, Git, Grasscutter and Grasscutter resources,you can also enable to use the system environment path of them in the `偏好设置` page.
 3. Enter `配置` page，Press 「配置 Grasscutter」and「Grasscutter 编译前准备」
-
 
 ## Update
 

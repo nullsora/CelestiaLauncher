@@ -1,9 +1,19 @@
 var ipc = require('electron').ipcRenderer;
 var path = require('path');
-var appPath;
-var config, confPath = 'conf/config.json';
+
+var appPath, stats, config, confPath = 'conf/config.json';
+
 var dialog = new mdui.Dialog('#Download', { modal: true });
 var cmdDialog = new mdui.Dialog('#CMD', { modal: true });
+
+var installEvent = {
+    Java: document.getElementById('InstallJava'),
+    Mongo: document.getElementById('InstallMongo'),
+    Git: document.getElementById('InstallGit'),
+    GC: document.getElementById('InstallGC'),
+    GCR: document.getElementById('InstallGC_R'),
+    GCstat: true
+};
 
 window.onload = function () {
     ipc.send('GetAppPath', {});
@@ -14,11 +24,27 @@ window.onload = function () {
     ipc.send('ReadConf', { Path: confPath });
     ipc.once('ConfContent', (event, args) => {
         config = args.Obj;
+        setInterval(UpdateStats(), 500);
     });
 };
 
 function Caution(message) {
     mdui.snackbar({ message: message });
+}
+
+function UpdateStats() {
+    ipc.send('GetStats', {});
+    ipc.once('StatsReturn', (event, args) => {
+        stats = args.Stats;
+        installEvent.GCstat = stats.hasGit || config.UseGitPath;
+        if (installEvent.GCstat) {
+            installEvent.GC.setAttribute('class', 'mdui-list-item mdui-ripple');
+            installEvent.GCR.setAttribute('class', 'mdui-list-item mdui-ripple');
+        } else {
+            installEvent.GC.setAttribute('class', 'mdui-list-item mdui-text-color-grey');
+            installEvent.GCR.setAttribute('class', 'mdui-list-item mdui-text-color-grey');
+        }
+    });
 }
 
 function DonloadFile(title, url, name) {
@@ -36,10 +62,10 @@ function DonloadFile(title, url, name) {
     });
 }
 
-function Unzip(title, name, filePath) {
-    document.getElementById('Progress').style.width = '0%';
+function UnzipAfterDownload(title, name, filePath) {
     ipc.on('Progress', (event, args) => {
         if (args.Progress >= 100) {
+            document.getElementById('Progress').style.width = '0%';
             ipc.removeAllListeners('Progress');
             document.getElementById('DialogContent').innerHTML = title;
             ipc.send('Unzip', {
@@ -95,55 +121,59 @@ document.getElementById('CMDConfirm').addEventListener('click', () => {
     document.getElementById('CMDConfirm').setAttribute('disabled', 'true');
 });
 
-document.getElementById('installJava').addEventListener('click', () => {
+installEvent.Java.addEventListener('click', () => {
     DonloadFile(
         '正在下载Java...',
         'https://mirrors.tuna.tsinghua.edu.cn/Adoptium/17/jdk/x64/windows/OpenJDK17U-jdk_x64_windows_hotspot_17.0.3_7.zip',
         'jdk.zip'
     );
-    Unzip(
+    UnzipAfterDownload(
         '正在安装Java...',
         'jdk.zip',
         'resources'
     );
 });
-document.getElementById('installMongo').addEventListener('click', () => {
+installEvent.Mongo.addEventListener('click', () => {
     DonloadFile(
         '正在下载MongoDB...',
         'https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-5.0.8.zip',
         'mongo.zip'
     );
-    Unzip(
+    UnzipAfterDownload(
         '正在安装MongoDB...',
         'mongo.zip',
         'resources'
     );
 });
-document.getElementById('installGit').addEventListener('click', () => {
+installEvent.Git.addEventListener('click', () => {
     DonloadFile(
         '正在下载Git...',
         'https://mirrors.tuna.tsinghua.edu.cn/github-release/git-for-windows/git/Git for Windows 2.36.1/MinGit-2.36.1-busybox-64-bit.zip',
         'git.zip'
     );
-    Unzip(
+    UnzipAfterDownload(
         '正在安装Git...',
         'git.zip',
         'resources/git'
     );
 });
-document.getElementById('installGC').addEventListener('click', () => {
-    FileCommand(
-        '正在从Github拉取Grasscutter dev分支...',
-        config.UseGitPath ? 'git' : path.join(appPath, 'resources/git/cmd/git.exe'),
-        'clone -b development https://ghproxy.com/https://github.com/Grasscutters/Grasscutter.git',
-        ''
-    );
+installEvent.GC.addEventListener('click', () => {
+    if (installEvent.GCstat) {
+        FileCommand(
+            '正在从Github拉取Grasscutter dev分支...',
+            config.UseGitPath ? 'git' : path.join(appPath, 'resources/git/cmd/git.exe'),
+            'clone -b development https://ghproxy.com/https://github.com/Grasscutters/Grasscutter.git',
+            ''
+        );
+    }
 });
-document.getElementById('installGC_R').addEventListener('click', () => {
-    FileCommand(
-        '正在从Github下载Grasscutter所需资源...',
-        config.UseGitPath ? 'git' : path.join(appPath, 'resources/git/cmd/git.exe'),
-        'clone https://ghproxy.com/https://github.com/Koko-boya/Grasscutter_Resources.git',
-        ''
-    );
+installEvent.GCR.addEventListener('click', () => {
+    if (installEvent.GCstat) {
+        FileCommand(
+            '正在从Github下载Grasscutter所需资源...',
+            config.UseGitPath ? 'git' : path.join(appPath, 'resources/git/cmd/git.exe'),
+            'clone https://ghproxy.com/https://github.com/Koko-boya/Grasscutter_Resources.git',
+            ''
+        );
+    }
 });

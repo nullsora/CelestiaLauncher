@@ -1,9 +1,10 @@
 const ele = require('electron');
-const initDownload = require('./src/js/initDownload').initDownload;
-const initUnzip = require('./src/js/initUnzip').initUnzip;
-const initCMD = require('./src/js/initCmd').initCmd;
-const initPath = require('./src/js/initPath').initPath;
-const initJson = require('./src/js/initJson').initJson;
+const initDownload = require('./src/initialize/initDownload').initDownload;
+const initUnzip = require('./src/initialize/initUnzip').initUnzip;
+const initCMD = require('./src/initialize/initCmd').initCmd;
+const initPath = require('./src/initialize/initPath').initPath;
+const initJson = require('./src/initialize/initJson').initJson;
+const checkFile = require('./src/initialize/checkFile').checkFile;
 
 var app = ele.app;
 var BrowserWindow = ele.BrowserWindow;
@@ -21,12 +22,13 @@ function createWindow() {
         }
     });
     mainWindow.loadFile('./src/index.html');
-    // mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
     initDownload(mainWindow);
     initUnzip(mainWindow);
     initCMD(mainWindow);
     initPath(mainWindow);
     initJson(mainWindow);
+    checkFile(mainWindow);
     mainWindow.on('closed', () => {
         mainWindow = null;
     });
