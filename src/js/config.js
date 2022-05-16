@@ -2,8 +2,8 @@ var ipc = require('electron').ipcRenderer;
 var shell = require('electron').shell;
 var path = require('path');
 var fs = require('fs');
-var config, confPath = 'conf/config.json';
 var appPath;
+var config, confPath = 'conf/config.json';
 var configDialog = new mdui.Dialog('#Config', { modal: true });
 var configContent = document.getElementById('ConfigContent'),
     configConfirm = document.getElementById('ConfigConfirm'),
@@ -18,6 +18,14 @@ window.onload = function () {
     ipc.send('ReadConf', { Path: confPath });
     ipc.once('ConfContent', (event, args) => {
         config = args.Obj;
+        if (config.AutoUpdate) {
+            FileCommand(
+                '正在从github拉取更新...',
+                config.UseGitPath ? 'git' : path.join(appPath, 'resources/git/cmd/git.exe'),
+                'pull',
+                'Grasscutter'
+            );
+        }
     });
 };
 
@@ -72,7 +80,7 @@ configConfirm.addEventListener('click', () => {
 document.getElementById('GrasscutterUpdate').addEventListener('click', () => {
     FileCommand(
         '正在从github拉取更新...',
-        config.UseGitPath ? 'git' : 'git/cmd/git.exe',
+        config.UseGitPath ? 'git' : path.join(appPath, 'resources/git/cmd/git.exe'),
         'pull',
         'Grasscutter'
     );
@@ -83,8 +91,8 @@ document.getElementById('GrasscutterCompile').addEventListener('click', () => {
     AsyncSysCommand(
         '正在编译为Jar File...',
         config.UseJDKPath ?
-            ['set JAVA_HOME=' + jdkPath, '.\\gradlew jar'] :
-            ['.\\gradlew jar'],
+            ['.\\gradlew jar'] :
+            ['set JAVA_HOME=' + jdkPath, '.\\gradlew jar'],
         'Grasscutter'
     );
 });
@@ -101,9 +109,9 @@ document.getElementById('GrasscutterPrecompile').addEventListener('click', () =>
         gradlewBatContent = fs.readFileSync(gradlewBatPath);
         fs.writeFileSync(gradlewBatClonePath, gradlewBatContent);
     }
-    fs.writeFileSync(gradlewBatPath, 'set JAVA_HOME=' + jdkPath + '\n');
+    fs.writeFileSync(gradlewBatPath, config.UseJDKPath ? '' : 'set JAVA_HOME=' + jdkPath + '\n');
     fs.appendFileSync(gradlewBatPath, gradlewBatContent);
-    shell.openPath(config.UseJDKPath ? gradlewBatClonePath : gradlewBatPath);
+    shell.openPath(gradlewBatPath);
 });
 
 document.getElementById('ConfigureGC').addEventListener('click', () => {
@@ -123,7 +131,7 @@ document.getElementById('ChangeBranch').addEventListener('click', () => {
     console.log(branchName);
     FileCommand(
         '正在切换分支到' + branchName,
-        config.UseGitPath ? 'git' : 'git/cmd/git.exe',
+        config.UseGitPath ? 'git' : path.join(appPath, 'resources/git/cmd/git.exe'),
         'checkout ' + branchName,
         'Grasscutter'
     );

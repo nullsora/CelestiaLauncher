@@ -4,7 +4,7 @@ const path = require('path');
 
 exports.initCmd = function (win) {
     ipcMain.on('DoFileCommand', (event, args) => {
-        let file = path.join(app.getAppPath(), 'resources', args.Path);
+        let file = args.Path;
         let cwd = path.join(app.getAppPath(), 'resources', args.Cwd);
         let cmdArgs = args.Other.split(' ');
         let child = spawn(file, cmdArgs, {

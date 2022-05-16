@@ -1,0 +1,10 @@
+{
+    "AutoUpdate": false,
+    "UseGitPath": false,
+    "GitPath": "",
+    "UseJDKPath": false,
+    "JDKPath": "",
+    "UseMongoService": false,
+    "UseCostomGC": false,
+    "GCPath": ""
+}

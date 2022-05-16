@@ -1,13 +1,19 @@
 var ipc = require('electron').ipcRenderer;
+var path = require('path');
+var appPath;
+var config, confPath = 'conf/config.json';
 var dialog = new mdui.Dialog('#Download', { modal: true });
 var cmdDialog = new mdui.Dialog('#CMD', { modal: true });
-var appPath;
 
 window.onload = function () {
     ipc.send('GetAppPath', {});
     ipc.once('ReturnAppPath', (event, args) => {
         appPath = args.Path;
         console.log(appPath);
+    });
+    ipc.send('ReadConf', { Path: confPath });
+    ipc.once('ConfContent', (event, args) => {
+        config = args.Obj;
     });
 };
 
@@ -121,7 +127,7 @@ document.getElementById('installGit').addEventListener('click', () => {
 document.getElementById('installGC').addEventListener('click', () => {
     FileCommand(
         '正在从Github拉取Grasscutter dev分支...',
-        'git/cmd/git.exe',
+        config.UseGitPath ? 'git' : path.join(appPath, 'resources/git/cmd/git.exe'),
         'clone -b development https://ghproxy.com/https://github.com/Grasscutters/Grasscutter.git',
         ''
     );
@@ -129,7 +135,7 @@ document.getElementById('installGC').addEventListener('click', () => {
 document.getElementById('installGC_R').addEventListener('click', () => {
     FileCommand(
         '正在从Github下载Grasscutter所需资源...',
-        'git/cmd/git.exe',
+        config.UseGitPath ? 'git' : path.join(appPath, 'resources/git/cmd/git.exe'),
         'clone https://ghproxy.com/https://github.com/Koko-boya/Grasscutter_Resources.git',
         ''
     );

@@ -33,7 +33,7 @@ window.onload = function () {
 
 AutoUpdate.addEventListener('click', () => {
     if (AutoUpdate.checked) {
-        Caution('请确保已经存在Git并已在启动器中设置。');
+        Caution('请确保已经存在Git并已在启动器中设置。打开后会在你每次进入配置页面时自动更新（不编译）。');
         launcherConfig.AutoUpdate = true;
         WriteConf();
     } else {
@@ -66,11 +66,19 @@ UseJDKPath.addEventListener('click', () => {
 
 UseGitPath.addEventListener('click', () => {
     if (UseGitPath.checked) {
-        Caution('请确保设置了Git的环境变量');
+        Caution('请确保设置了Git的环境变量。');
         launcherConfig.UseGitPath = true;
         WriteConf();
     } else {
         launcherConfig.UseGitPath = false;
         WriteConf();
     }
+});
+
+document.getElementById('ResetConfig').addEventListener('click', () => {
+    ipc.send('ReadConf', { Path: 'conf/defaultconfig.json' });
+    ipc.once('ConfContent', (event, args) => {
+        ipc.send('WriteConf', { Path: confPath, Obj: args.Obj });
+        location.reload();
+    });
 });

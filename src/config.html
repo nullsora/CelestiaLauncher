@@ -51,18 +51,23 @@
                                 <div class="mdui-list-item-content">Grasscutter编译前准备</div>
                                 <i class="mdui-icon material-icons">developer_board</i>
                             </li>
-                            <li class="mdui-divider"></li>
-                            <li class="mdui-list-item">
-                                <div class="mdui-list-item-content mdui-textfield mdui-textfield-floating-label">
-                                    <label class="mdui-textfield-label">在此输入要切换的分支名，如：development</label>
-                                    <input class="mdui-textfield-input" type="text" id="BranchInput" />
-                                </div>
-                                <button class="mdui-btn mdui-btn-icon mdui-ripple mdui-float-right" id="ChangeBranch"
-                                    mdui-tooltip="{content:'切换分支'}">
-                                    <i class="mdui-text-color-theme-accent mdui-icon material-icons">autorenew</i>
-                                </button>
-                            </li>
                         </ul>
+                    </div>
+                </div>
+                <div class="mdui-card mdui-hoverable mdui-m-t-2">
+                    <div class="mdui-card-content">
+                        <div class="mdui-row mdui-m-l-2 mdui-m-r-1">
+                            <div class="mdui-textfield mdui-textfield-floating-label">
+                                <label class="mdui-textfield-label">在此输入要切换的分支名，如：development</label>
+                                <input class="mdui-textfield-input" type="text" id="BranchInput" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mdui-card-actions">
+                        <button class="mdui-btn mdui-btn-raised mdui-color-theme-accent mdui-ripple mdui-float-right"
+                            id="ChangeBranch" mdui-tooltip="{content:'切换分支'}">
+                            切换分支
+                        </button>
                     </div>
                 </div>
             </div>
