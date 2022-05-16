@@ -17,6 +17,10 @@ window.onload = function () {
     });
 };
 
+function Caution(message) {
+    mdui.snackbar({ message: message });
+}
+
 function DonloadFile(title, url, name) {
     document.getElementById('DialogContent').innerHTML = title;
     dialog.open();
@@ -49,6 +53,7 @@ function Unzip(title, name, filePath) {
                 if (args.Finish == true) {
                     document.getElementById('ConfirmBtn').removeAttribute('disabled');
                     document.getElementById('DialogContent').innerHTML = '已完成.';
+                    Caution('下载已完成');
                 }
                 ipc.removeAllListeners('UnzipProgress');
             });
@@ -77,8 +82,10 @@ function FileCommand(title, path, other, cwd) {
         document.getElementById('CMDConfirm').removeAttribute('disabled');
         if (args.Return == 0) {
             document.getElementById('CMDLog').innerHTML += 'success.';
+            Caution('下载已完成');
         } else {
             document.getElementById('CMDLog').innerHTML = 'download failed. exit with code ' + args.Return;
+            Caution('下载失败');
         }
     });
 }

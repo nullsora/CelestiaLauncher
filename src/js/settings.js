@@ -6,6 +6,10 @@ var AutoUpdate = document.getElementById('AutoUpdate'),
     UseMongoService = document.getElementById('UseMongoService'),
     UseJDKPath = document.getElementById('UseJDKPath'),
     UseGitPath = document.getElementById('UseGitPath');
+var configDialog = new mdui.Dialog('#Config', { modal: true });
+var configContent = document.getElementById('ConfigContent'),
+    configConfirm = document.getElementById('ConfigConfirm'),
+    configLog = document.getElementById('ConfigLog');
 
 function Caution(message) {
     mdui.snackbar({ message: message, position: 'left-bottom' });
@@ -13,6 +17,27 @@ function Caution(message) {
 
 function WriteConf() {
     ipc.send('WriteConf', { Path: confPath, Obj: launcherConfig });
+}
+
+function AsyncSysCommand(title, command, cwd) {
+    configDialog.open();
+    configContent.innerHTML = title;
+    ipc.send('DoSysCommand', {
+        Command: command,
+        Cwd: cwd
+    });
+    ipc.once('SysCommandReturn', (event, args) => {
+        configConfirm.removeAttribute('disabled');
+        console.log('return');
+        if (args.Error == null) {
+            configLog.innerHTML = 'success. ' + args.Return;
+        } else {
+            configLog.innerHTML = 'error.\n' + args.Error;
+        }
+        console.log(args.Return);
+        console.error(args.Error);
+        console.log(args.Stderr);
+    });
 }
 
 window.onload = function () {
@@ -80,5 +105,15 @@ document.getElementById('ResetConfig').addEventListener('click', () => {
     ipc.once('ConfContent', (event, args) => {
         ipc.send('WriteConf', { Path: confPath, Obj: args.Obj });
         location.reload();
+    });
+});
+
+document.getElementById('ClearAll').addEventListener('click', () => {
+    mdui.snackbar({
+        message: '您确定要删除所有已下载资源吗？',
+        buttonText: '确定',
+        onButtonClick: function () {
+            mdui.alert('还没做呢（');
+        }
     });
 });

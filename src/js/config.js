@@ -29,6 +29,10 @@ window.onload = function () {
     });
 };
 
+function Caution(message) {
+    mdui.snackbar({ message: message });
+}
+
 function FileCommand(title, path, other, cwd) {
     configDialog.open();
     configContent.innerHTML = title;
@@ -45,8 +49,10 @@ function FileCommand(title, path, other, cwd) {
         configConfirm.removeAttribute('disabled');
         if (args.Return == 0) {
             configLog.innerHTML += 'success.';
+            Caution('执行完毕');
         } else {
             configLog.innerHTML = 'execute failed. exit with code ' + args.Return;
+            Caution('执行失败');
         }
     });
 }
@@ -63,8 +69,10 @@ function AsyncSysCommand(title, command, cwd) {
         console.log('return');
         if (args.Error == null) {
             configLog.innerHTML = 'success. ' + args.Return;
+            Caution('执行完毕');
         } else {
             configLog.innerHTML = 'error.\n' + args.Error;
+            Caution('执行失败');
         }
         console.log(args.Return);
         console.error(args.Error);

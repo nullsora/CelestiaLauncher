@@ -87,6 +87,23 @@
         </div>
     </div>
 
+    <div class="mdui-dialog" id="Config">
+        <div class="mdui-dialog-title">执行中</div>
+        <div class="mdui-dialog-content">
+            <div class="mdui-progress">
+                <div class="mdui-progress-indeterminate"></div>
+            </div>
+            <div id="ConfigContent" class="mdui-typo mdui-m-t-1">下载中</div>
+            <div class="mdui-typo">
+                <pre id="ConfigLog"></pre>
+            </div>
+        </div>
+        <div class="mdui-dialog-actions">
+            <button id="ConfigConfirm" class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent"
+                mdui-dialog-confirm disabled>确定</button>
+        </div>
+    </div>
+
     <script src="../node_modules/mdui/dist/js/mdui.min.js"></script>
     <script src="./js/settings.js"></script>
     <script src="./js/script.js"></script>
