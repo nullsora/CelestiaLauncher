@@ -1,1 +1,1 @@
-{"AutoUpdate":false,"UseGitPath":false,"GitPath":"","UseJDKPath":false,"JDKPath":"","UseMongoService":false,"UseCostomGC":false,"GCPath":""}
+{"AutoUpdate":false,"UseGitPath":true,"GitPath":"","UseJDKPath":true,"JDKPath":"","UseMongoService":true,"UseCostomGC":false,"GCPath":""}
