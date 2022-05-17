@@ -45,12 +45,13 @@ pre {
     border: none;
 }
 
-.mdui-card-header {
+.mdui-card-actions {
     margin-top: 8px;
+    margin-bottom: 8px;
 }
 
-.mdui-card-contents,
-.mdui-card-actions {
+.mdui-card-header,
+.mdui-card-contents {
     margin-top: 8px
 }
 
