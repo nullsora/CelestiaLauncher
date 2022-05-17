@@ -2,6 +2,7 @@ var ipc = require('electron').ipcRenderer;
 var shell = require('electron').shell;
 var path = require('path');
 var fs = require('fs');
+var { exec } = require('child_process');
 var $ = mdui.$;
 var jarSelect = new mdui.Select('#JarSelect');
 var appPath, stats, config, confPath = 'conf/config.json';
@@ -15,15 +16,11 @@ window.onload = function () {
         let filePath = path.join(appPath, 'resources\\Grasscutter');
 
         fs.readdir(filePath, function (err, files) {
-            if (err) {
-                console.warn(err, "读取文件夹错误！");
-            } else {
+            if (!err) {
                 files.forEach(function (fileName) {
                     let fileDir = path.join(filePath, fileName);
                     fs.stat(fileDir, function (err, stats) {
-                        if (err) {
-                            console.warn('获取文件stats失败');
-                        } else {
+                        if (!err) {
                             let isFile = stats.isFile();
                             if (isFile && path.extname(fileDir) == '.jar') {
                                 let value = jarPath.push(fileDir);
@@ -70,3 +67,37 @@ document.getElementById('LaunchGame').addEventListener('click', () => {
         shell.openPath(launchPath);
     }, 1000);
 });
+
+/*
+setTimeout(() => {
+    let card = document.getElementById('GCCommandCard');
+    let sendBtn = document.getElementById('GCSend');
+    card.setAttribute('class', 'mdui-card mdui-hoverable');
+    let run = exec(launchContent, {
+        cwd: path.join(appPath, 'resources/Grasscutter'),
+        maxBuffer: Infinity,
+        encoding: 'gbk'
+    }, (e, o, se) => {
+        card.setAttribute('class', 'mdui-card mdui-hoverable mdui-hidden');
+        document.getElementById('GCLog').innerHTML = '';
+        sendBtn.removeEventListener('click', SendGCMessage());
+        clearInterval(upd);
+    });
+    sendBtn.addEventListener('click', SendGCMessage());
+    function SendGCMessage() {
+        let sendCmd = document.getElementById('GCCommand').value;
+        console.log(sendCmd);
+        run.stdin.write(sendCmd, (err) => { console.error(err); });
+    }
+    function UpdateLog() {
+        run.stdout.on('data', (data) => {
+            document.getElementById('GCLog').innerHTML += data;
+            document.getElementById('GCLog').scroll({
+                top: document.getElementById('GCLog').clientHeight,
+                left: 0
+            });
+        });
+    }
+    let upd = setInterval(UpdateLog(), 100);
+}, 1000);
+*/

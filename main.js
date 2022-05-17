@@ -22,7 +22,7 @@ function createWindow() {
         }
     });
     mainWindow.loadFile('./src/index.html');
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
     initDownload(mainWindow);
     initUnzip(mainWindow);
     initCMD(mainWindow);

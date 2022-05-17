@@ -13,7 +13,17 @@ var configDialog = new mdui.Dialog('#Config', { modal: true });
 
 var configContent = document.getElementById('ConfigContent'),
     configConfirm = document.getElementById('ConfigConfirm'),
-    configLog = document.getElementById('ConfigLog');
+    configLog = document.getElementById('ConfigLog'),
+    loadGCS = document.getElementById('LoadGCSettings');
+
+var GCS = {
+    luaPath: document.getElementById('LuaPath'),
+    sPort: document.getElementById('ServerPort'),
+    sIP: document.getElementById('ServerIP'),
+    gIP: document.getElementById('GameIP'),
+    aAcc: document.getElementById('AutoAccount'),
+    stm: document.getElementById('Stamina')
+};
 
 function Caution(message) {
     mdui.snackbar({ message: message, position: 'left-bottom' });
@@ -57,8 +67,13 @@ window.onload = function () {
         launcherConfig.UseMongoService ? UseMongoService.setAttribute('checked', true) : {};
         launcherConfig.UseJDKPath ? UseJDKPath.setAttribute('checked', true) : {};
         launcherConfig.UseGitPath ? UseGitPath.setAttribute('checked', true) : {};
-        ipc.send('GetStats', {});
-        ipc.once('StatsReturn', (event, args) => { stats = args.Stats; });
+    });
+    ipc.send('GetStats', {});
+    ipc.once('StatsReturn', (event, args) => {
+        stats = args.Stats;
+        if (stats.hasGC) {
+            loadGCS.removeAttribute('disabled');
+        }
     });
 };
 
@@ -120,7 +135,7 @@ function RemoveAll() {
         '正在删除全部内容...',
         commands,
         ''
-    )
+    );
 }
 
 document.getElementById('ResetConfig').addEventListener('click', () => {
@@ -138,5 +153,30 @@ document.getElementById('RemoveAll').addEventListener('click', () => {
         onButtonClick: function () {
             RemoveAll();
         }
+    });
+});
+
+loadGCS.addEventListener('click', () => {
+    let GCConfig;
+    ipc.send('ReadConf', { Path: 'resources/Grasscutter/config.json' });
+    ipc.once('ConfContent', (event, args) => {
+        GCConfig = args.Obj;
+        console.log(GCConfig);
+        document.getElementById('GCSettings').removeAttribute('class');
+        GCS.luaPath.value = GCConfig.folderStructure.scripts;
+        GCS.sPort.value = GCConfig.server.http.bindPort;
+        GCS.sIP.value = GCConfig.server.http.accessAddress;
+        GCS.gIP.value = GCConfig.server.game.accessAddress;
+        GCConfig.account.autoCreate ? GCS.aAcc.setAttribute('checked', '') : {};
+        GCConfig.server.game.gameOptions.staminaUsage ? GCS.stm.setAttribute('checked', '') : {};
+        document.getElementById('SaveChanges').addEventListener('click', () => {
+            GCConfig.folderStructure.scripts = GCS.luaPath.value;
+            GCConfig.server.http.bindPort = GCS.sPort.value;
+            GCConfig.server.http.accessAddress = GCS.sIP.value;
+            GCConfig.server.game.accessAddress = GCS.gIP.value;
+            GCConfig.account.autoCreate = GCS.aAcc.checked;
+            GCConfig.server.game.gameOptions.staminaUsage = GCS.stm.checked;
+            ipc.send('WriteConf', { Path: 'resources/Grasscutter/config.json', Obj: GCConfig });
+        });
     });
 });

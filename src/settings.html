@@ -39,7 +39,7 @@
                     <div id="SettingList">
                         <div class="mdui-card-content">
                             <ul class="mdui-list">
-                                <li class="mdui-list-item mdui-ripple">
+                                <li class="mdui-list-item">
                                     <i class="mdui-list-item-icon mdui-icon material-icons">autorenew</i>
                                     <div class="mdui-list-item-content">自动更新</div>
                                     <label class="mdui-switch">
@@ -47,7 +47,7 @@
                                         <i class="mdui-switch-icon"></i>
                                     </label>
                                 </li>
-                                <li class="mdui-list-item mdui-ripple">
+                                <li class="mdui-list-item">
                                     <i class="mdui-list-item-icon mdui-icon material-icons">adjust</i>
                                     <div class="mdui-list-item-content">使用系统MongoDB服务</div>
                                     <label class="mdui-switch">
@@ -55,7 +55,7 @@
                                         <i class="mdui-switch-icon"></i>
                                     </label>
                                 </li>
-                                <li class="mdui-list-item mdui-ripple">
+                                <li class="mdui-list-item">
                                     <i class="mdui-list-item-icon mdui-icon material-icons">adjust</i>
                                     <div class="mdui-list-item-content">使用系统JDK环境变量</div>
                                     <label class="mdui-switch">
@@ -63,7 +63,7 @@
                                         <i class="mdui-switch-icon"></i>
                                     </label>
                                 </li>
-                                <li class="mdui-list-item mdui-ripple">
+                                <li class="mdui-list-item">
                                     <i class="mdui-list-item-icon mdui-icon material-icons">adjust</i>
                                     <div class="mdui-list-item-content">使用系统Git环境变量</div>
                                     <label class="mdui-switch">
@@ -75,12 +75,76 @@
                         </div>
                     </div>
                 </div>
+                <div id="GCSettings" class="mdui-hidden">
+                    <div class="mdui-card mdui-hoverable mdui-m-t-2">
+                        <div class="mdui-card-header" id="SettingHead">
+                            <i class="mdui-card-header-avatar mdui-icon material-icons">videogame_asset</i>
+                            <div class="mdui-card-header-title">Grasscutter设置</div>
+                            <div class="mdui-card-header-subtitle">GC常用设置</div>
+                        </div>
+                        <div class="mdui-card-content">
+                            <ul class="mdui-list">
+                                <li class="mdui-list-item mdui-row">
+                                    <div class="mdui-textfield">
+                                        <i class="mdui-icon material-icons">folder_special</i>
+                                        <label class="mdui-textfield-label">lua文件夹位置</label>
+                                        <input id="LuaPath" class="mdui-textfield-input" type="text" />
+                                    </div>
+                                </li>
+                                <li class="mdui-list-item mdui-row">
+                                    <div class="mdui-textfield">
+                                        <i class="mdui-icon material-icons">folder_special</i>
+                                        <label class="mdui-textfield-label">服务器登录监听端口</label>
+                                        <input id="ServerPort" class="mdui-textfield-input" type="text" />
+                                    </div>
+                                </li>
+                                <li class="mdui-list-item mdui-row">
+                                    <div class="mdui-textfield">
+                                        <i class="mdui-icon material-icons">folder_special</i>
+                                        <label class="mdui-textfield-label">服务器登录开放IP</label>
+                                        <input id="ServerIP" class="mdui-textfield-input" type="text" />
+                                    </div>
+                                </li>
+                                <li class="mdui-list-item mdui-row">
+                                    <div class="mdui-textfield">
+                                        <i class="mdui-icon material-icons">folder_special</i>
+                                        <label class="mdui-textfield-label">游戏服务器开放IP</label>
+                                        <input id="GameIP" class="mdui-textfield-input" type="text" />
+                                    </div>
+                                </li>
+                                <li class="mdui-list-item mdui-m-t-2">
+                                    <i class="mdui-list-item-icon mdui-icon material-icons">adjust</i>
+                                    <div class="mdui-list-item-content">自动注册账号</div>
+                                    <label class="mdui-switch">
+                                        <input type="checkbox" id="AutoAccount" />
+                                        <i class="mdui-switch-icon"></i>
+                                    </label>
+                                </li>
+                                <li class="mdui-list-item mdui-m-t-2">
+                                    <i class="mdui-list-item-icon mdui-icon material-icons">adjust</i>
+                                    <div class="mdui-list-item-content">启用体力</div>
+                                    <label class="mdui-switch">
+                                        <input type="checkbox" id="Stamina" />
+                                        <i class="mdui-switch-icon"></i>
+                                    </label>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="mdui-card-actions">
+                            <button id="SaveChanges"
+                                class="mdui-btn mdui-btn-raised mdui-color-theme mdui-float-right mdui-ripple">
+                                保存配置</button>
+                        </div>
+                    </div>
+                </div>
                 <div class="mdui-card mdui-hoverable mdui-m-t-2">
                     <div class="mdui-card-actions">
                         <button class="mdui-btn mdui-btn-raised mdui-color-red mdui-ripple mdui-float-right"
                             id="RemoveAll">清除下载内容</button>
                         <button class="mdui-btn mdui-btn-raised mdui-color-theme mdui-ripple mdui-float-right"
                             id="ResetConfig">重置启动器设置</button>
+                        <button class="mdui-btn mdui-btn-raised mdui-color-theme mdui-ripple mdui-float-right"
+                            id="LoadGCSettings" disabled>加载Grasscutter配置文件</button>
                     </div>
                 </div>
             </div>
@@ -93,7 +157,7 @@
             <div class="mdui-progress">
                 <div class="mdui-progress-indeterminate"></div>
             </div>
-            <div id="ConfigContent" class="mdui-typo mdui-m-t-1">下载中</div>
+            <div id="ConfigContent" class="mdui-typo mdui-m-t-1"></div>
             <div class="mdui-typo">
                 <pre id="ConfigLog"></pre>
             </div>

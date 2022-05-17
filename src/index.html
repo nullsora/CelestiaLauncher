@@ -15,35 +15,51 @@
     <div id="base"></div>
 
     <div class="mdui-container">
-        <div class="mdui-col-xs-5">
-            <div class="mdui-card mdui-hoverable">
-                <div class="mdui-card-media">
-                    <img src="./res/img/Celestia.jpg" />
-                    <div class="mdui-card-media-covered mdui-card-media-covered-gradient">
-                        <div class="mdui-card-primary">
-                            <div class="mdui-card-primary-title">Celestia Launcher</div>
-                            <div class="mdui-card-primary-subtitle">天空岛启动器</div>
-                            <div class="mdui-card-primary-subtitle">Developed by KL_kirito</div>
+        <div class="mdui-row mdui-m-t-2">
+            <div class="mdui-col-xs-4">
+                <div class="mdui-card mdui-hoverable">
+                    <div class="mdui-card-media">
+                        <img src="./res/img/Celestia.jpg" />
+                        <div class="mdui-card-media-covered mdui-card-media-covered-gradient">
+                            <div class="mdui-card-primary">
+                                <div class="mdui-card-primary-title">Celestia Launcher</div>
+                                <div class="mdui-card-primary-subtitle">天空岛启动器</div>
+                                <div class="mdui-card-primary-subtitle">Developed by KL_kirito</div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="mdui-card-content">
-                    <div class="mdui-typo">
-                        <div>选择Grasscutter文件：</div>
-                        <select class="mdui-select" id="JarSelect" style="width: 100%;"></select>
+                    <div class="mdui-card-content">
+                        <div class="mdui-typo">
+                            <div>选择Grasscutter文件：</div>
+                            <select class="mdui-select" id="JarSelect" style="width: 100%;"></select>
+                        </div>
+                    </div>
+                    <div class="mdui-card-actions">
+                        <button id="LaunchGame" class="mdui-btn mdui-btn-raised mdui-color-theme-accent mdui-ripple"
+                            style="width: 100%;" mdui-tooltip="{content: '启动！'}">
+                            启动游戏
+                        </button>
                     </div>
                 </div>
-                <div class="mdui-card-actions">
-                    <button id="LaunchGame" class="mdui-btn mdui-btn-raised mdui-color-theme-accent mdui-ripple"
-                        style="width: 100%;" mdui-tooltip="{content: '启动！'}">
-                        启动游戏
-                    </button>
-                </div>
             </div>
-        </div>
-        <div class="mdui-row mdui-m-t-2">
             <div class="mdui-col-xs-8">
-                <div class="mdui-card mdui-hoverable">
+                <div id="GCCommandCard" class="mdui-card mdui-hoverable mdui-hidden">
+                    <div class="mdui-card-content">
+                        <div class="mdui-row mdui-typo">
+                            <pre style="height: 450px;" id="GCLog"></pre>
+                        </div>
+                        <div class="mdui-row mdui-m-t-1">
+                            <div class="mdui-col-xs-10 mdui-textfield">
+                                <input id="GCCommand" class="mdui-textfield-input" type="text" placeholder="发送命令" />
+                            </div>
+                            <div class="mdui-col-xs-2">
+                                <button id="GCSend"
+                                    class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent">
+                                    发送
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

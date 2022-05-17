@@ -9,9 +9,7 @@
 
 ## 简介
 
-考虑到Grasscutter配置的繁琐以及更新的速度之快，并且很多人并不会使用git来进行拉取，抑或是git的形式不适合于每一个人，在这样的条件下，**Celestia Launcher**应运而生。
-
-Celestia Launcher 可以帮您下载Grasscutter的全部依赖和资源，并一键启动，保证您使用Grasscutter的畅通无阻。
+Celestia Launcher 可以帮您下载Grasscutter的全部依赖和资源，切换分支，更新和一键启动，保证您使用Grasscutter的畅通无阻。
 
 ## 特性
 
@@ -19,7 +17,7 @@ Celestia Launcher 可以帮您下载Grasscutter的全部依赖和资源，并一
 - [x] 启动Grasscutter
 - [x] 从github更新Grasscutter并可编译
 - [x] 允许使用系统环境变量
-- [ ] 便捷的对Grasscutter config文件进行更改
+- [x] 便捷的对Grasscutter config文件进行更改
 - [ ] 完善的自动更新功能
 - [ ] 应用内命令面板
 - [ ] ID查询

@@ -5,7 +5,7 @@ const ResPath = {
     JDK: path.join(app.getAppPath(), 'resources/jdk-17.0.3+7/bin/java.exe'),
     Mongo: path.join(app.getAppPath(), 'resources/mongodb-win32-x86_64-windows-5.0.8/bin/mongod.exe'),
     Git: path.join(app.getAppPath(), 'resources/git/cmd/git.exe'),
-    GC: path.join(app.getAppPath(), 'resources/Grasscutter/gradlew'),
+    GC: path.join(app.getAppPath(), 'resources/Grasscutter/config.json'),
     GCR: path.join(app.getAppPath(), 'resources/Grasscutter_Resources/README.md')
 };
 
