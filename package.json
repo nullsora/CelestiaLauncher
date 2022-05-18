@@ -1,17 +1,46 @@
 {
   "name": "celestia-launcher",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "A Launcher for Grasscutter",
   "main": "main.js",
   "scripts": {
     "dev": "electron .",
-    "build": "electron-packager ./ Celestia-Launcher --out ./build --overwrite --platform=win32 --icon=./src/res/img/CL.ico"
+    "pack": "electron-packager ./ Celestia-Launcher --out ./build --overwrite --platform=win32 --icon=./src/res/img/CL.ico",
+    "build": "electron-builder"
   },
+  "build": {
+    "appId": "com.celestialauncher.app",
+    "productName": "Celestia Launcher",
+    "win": {
+      "icon": "./src/res/img/CL.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "directories": {
+      "output": "./build"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "./src/res/img/CL.ico",
+      "createDesktopShortcut": true,
+      "shortcutName": "./src/res/img/CL.ico"
+    }
+  },
+  "repository": "https://github.com/KL-kirito/CelestiaLauncher",
   "keywords": [],
   "author": "KL_kirito",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "devDependencies": {
     "electron": "^18.2.2",
+    "electron-builder": "^23.0.3",
     "electron-packager": "^15.5.1"
   },
   "dependencies": {

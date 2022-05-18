@@ -4,11 +4,11 @@ const { InitUnzipEvtIn } = require('./src/initialize/FileOperate');
 const { InitJsonOperatorIn } = require('./src/initialize/JsonOperate');
 const { InitCmdExecuteIn } = require('./src/initialize/SysCommand');
 const { SendAppPathTo } = require('./src/initialize/GetAppPath');
-const checkFile = require('./src/initialize/CheckStats').checkFile;
+const { CheckFileStatsIn } = require('./src/initialize/CheckStats');
 
-var app = electron.app;
-var BrowserWindow = electron.BrowserWindow;
-var ipc = electron.ipcMain;
+const app = electron.app;
+const BrowserWindow = electron.BrowserWindow;
+const ipc = electron.ipcMain;
 
 let mainWindow;
 function createWindow() {
@@ -22,13 +22,13 @@ function createWindow() {
         }
     });
     mainWindow.loadFile('./src/index.html');
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
     InitDownloadEvtIn(mainWindow);
     InitUnzipEvtIn(mainWindow);
     InitJsonOperatorIn(mainWindow);
     InitCmdExecuteIn(mainWindow);
     SendAppPathTo(mainWindow);
-    checkFile(mainWindow);
+    CheckFileStatsIn(mainWindow);
     mainWindow.on('closed', () => {
         mainWindow = null;
     });

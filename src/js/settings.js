@@ -52,23 +52,6 @@ window.onload = function () {
     });
 };
 
-function RemoveAll() {
-    let commands = [];
-    if (fileStats.hasJDK) { commands.push('rd /q /s .\\jdk-17.0.3+7'); }
-    if (fileStats.hasMongo) {
-        commands.push('rd /q /s .\\mongodb-win32-x86_64-windows-5.0.8\\bin');
-        commands.push('del /q /s .\\mongodb-win32-x86_64-windows-5.0.8\\data\\*.*');
-    }
-    if (fileStats.hasGit) { commands.push('rd /q /s .\\git'); }
-    if (fileStats.hasGC) { commands.push('rd /q /s .\\Grasscutter'); }
-    if (fileStats.hasGCR) { commands.push('rd /q /s .\\Grasscutter_Resources'); }
-    AsyncSysCmd(
-        '正在删除全部内容...',
-        commands,
-        ''
-    );
-}
-
 function Caution(message) {
     mdui.snackbar({ message: message, position: 'left-bottom' });
 }
@@ -90,14 +73,31 @@ function AsyncSysCmd(title, command, cwd) {
         CmdDialog.confirmBtn.removeAttribute('disabled');
         ipcRenderer.removeAllListeners('CmdLog');
         if (args.Error == null) {
-            CmdDialog.log.innerHTML = args.Return + '\nSuccess.';
+            CmdDialog.log.innerHTML = 'Success.\n' + args.Return;
             Caution('执行成功');
         } else {
-            CmdDialog.log.innerHTML += '\nExecute failed. Exit because of ' + args.Error;
+            CmdDialog.log.innerHTML += 'Execute failed. Exit because of ' + args.Error;
             console.error(args.Error);
             Caution('执行失败');
         }
     });
+}
+
+function RemoveAll() {
+    let commands = ['cd .\\'];
+    if (fileStats.hasJDK) { commands.push('rd /q /s .\\jdk-17.0.3+7'); }
+    if (fileStats.hasMongo) {
+        commands.push('rd /q /s .\\mongodb-win32-x86_64-windows-5.0.8\\bin');
+        commands.push('del /q /s .\\mongodb-win32-x86_64-windows-5.0.8\\data\\*.*');
+    }
+    if (fileStats.hasGit) { commands.push('rd /q /s .\\git'); }
+    if (fileStats.hasGC) { commands.push('rd /q /s .\\Grasscutter'); }
+    if (fileStats.hasGCR) { commands.push('rd /q /s .\\Grasscutter_Resources'); }
+    AsyncSysCmd(
+        '正在删除全部内容...',
+        commands,
+        ''
+    );
 }
 
 Elements.autoUpdate.addEventListener('click', () => {

@@ -10,7 +10,7 @@ const ResPath = {
     GCConfig: path.join(app.getAppPath(), 'resources/Grasscutter/config.json')
 };
 
-exports.checkFile = function (win) {
+exports.CheckFileStatsIn = function (win) {
     var stats = {
         hasJDK: false,
         hasMongo: false,
