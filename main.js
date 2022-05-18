@@ -1,14 +1,14 @@
-const ele = require('electron');
-const initDownload = require('./src/initialize/initDownload').initDownload;
-const initUnzip = require('./src/initialize/initUnzip').initUnzip;
-const initCMD = require('./src/initialize/initCmd').initCmd;
-const initPath = require('./src/initialize/initPath').initPath;
-const initJson = require('./src/initialize/initJson').initJson;
-const checkFile = require('./src/initialize/checkFile').checkFile;
+const electron = require('electron');
+const { InitDownloadEvtIn } = require('./src/initialize/FileOperate');
+const { InitUnzipEvtIn } = require('./src/initialize/FileOperate');
+const { InitJsonOperatorIn } = require('./src/initialize/JsonOperate');
+const { InitCmdExecuteIn } = require('./src/initialize/SysCommand');
+const { SendAppPathTo } = require('./src/initialize/GetAppPath');
+const checkFile = require('./src/initialize/CheckStats').checkFile;
 
-var app = ele.app;
-var BrowserWindow = ele.BrowserWindow;
-var ipc = ele.ipcMain;
+var app = electron.app;
+var BrowserWindow = electron.BrowserWindow;
+var ipc = electron.ipcMain;
 
 let mainWindow;
 function createWindow() {
@@ -22,12 +22,12 @@ function createWindow() {
         }
     });
     mainWindow.loadFile('./src/index.html');
-    // mainWindow.webContents.openDevTools();
-    initDownload(mainWindow);
-    initUnzip(mainWindow);
-    initCMD(mainWindow);
-    initPath(mainWindow);
-    initJson(mainWindow);
+    mainWindow.webContents.openDevTools();
+    InitDownloadEvtIn(mainWindow);
+    InitUnzipEvtIn(mainWindow);
+    InitJsonOperatorIn(mainWindow);
+    InitCmdExecuteIn(mainWindow);
+    SendAppPathTo(mainWindow);
     checkFile(mainWindow);
     mainWindow.on('closed', () => {
         mainWindow = null;
@@ -56,8 +56,3 @@ ipc.on('window-max', function () {
 ipc.on('window-min', function () {
     mainWindow.minimize();
 });
-
-// Problems: 执行命令时应用无响应
-// TODO: 读写config
-// TODO - 2: 实时命令面板（链接到cmd），手动配置环境
-// TODO - 3: 便捷的更改Grasscutter配置文件，查询ID

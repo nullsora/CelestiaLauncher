@@ -55,7 +55,7 @@
                                 <div class="mdui-list-item-content">Grasscutter</div>
                                 <i class="mdui-icon material-icons">gamepad</i>
                             </li>
-                            <li class="mdui-list-item mdui-ripple" id="InstallGC_R">
+                            <li class="mdui-list-item mdui-ripple" id="InstallGCR">
                                 <div class="mdui-list-item-content">Grasscutter资源</div>
                                 <i class="mdui-icon material-icons">settings_input_component</i>
                             </li>
@@ -66,33 +66,33 @@
         </div>
     </div>
 
-    <div class="mdui-dialog" id="Download">
+    <div class="mdui-dialog" id="ProgressDialog">
         <div class="mdui-dialog-title">下载中</div>
         <div class="mdui-dialog-content">
             <div class="mdui-progress">
                 <div id="Progress" class="mdui-progress-determinate" style="width: 0%;"></div>
             </div>
-            <div id="DialogContent" class="mdui-m-t-1"></div>
+            <div id="ProgressContent" class="mdui-m-t-1"></div>
         </div>
         <div class="mdui-dialog-actions">
-            <button id="ConfirmBtn" class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent"
+            <button id="ProgressConfirmBtn" class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent"
                 mdui-dialog-confirm disabled>完成</button>
         </div>
     </div>
 
-    <div class="mdui-dialog" id="CMD">
+    <div class="mdui-dialog" id="CmdDialog">
         <div class="mdui-dialog-title">执行中</div>
         <div class="mdui-dialog-content">
             <div class="mdui-progress">
                 <div class="mdui-progress-indeterminate"></div>
             </div>
-            <div id="CMDContent" class="mdui-typo mdui-m-t-1">下载中</div>
+            <div id="CmdContent" class="mdui-typo mdui-m-t-1"></div>
             <div class="mdui-typo">
-                <pre id="CMDLog"></pre>
+                <pre id="CmdLog"></pre>
             </div>
         </div>
         <div class="mdui-dialog-actions">
-            <button id="CMDConfirm" class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent"
+            <button id="CmdConfirmBtn" class="mdui-btn mdui-btn-raised mdui-ripple mdui-color-theme-accent"
                 mdui-dialog-confirm disabled>确定</button>
         </div>
     </div>

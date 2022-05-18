@@ -1,6 +1,6 @@
 const { app, ipcMain } = require('electron');
 
-exports.initPath = function (win) {
+exports.SendAppPathTo = function (win) {
     var path = app.getAppPath();
     ipcMain.on('GetAppPath', (event, args) => {
         setTimeout(() => {

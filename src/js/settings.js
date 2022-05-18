@@ -1,152 +1,158 @@
-var ipc = require('electron').ipcRenderer;
-var path = require('path');
+const { ipcRenderer } = require('electron');
+const path = require('path');
 
-var confPath = 'conf/config.json';
-var appPath, launcherConfig, stats;
+let appPath, fileStats, launcherConf, confPath = 'conf/config.json';
 
-var AutoUpdate = document.getElementById('AutoUpdate'),
-    UseMongoService = document.getElementById('UseMongoService'),
-    UseJDKPath = document.getElementById('UseJDKPath'),
-    UseGitPath = document.getElementById('UseGitPath');
-
-var configDialog = new mdui.Dialog('#Config', { modal: true });
-
-var configContent = document.getElementById('ConfigContent'),
-    configConfirm = document.getElementById('ConfigConfirm'),
-    configLog = document.getElementById('ConfigLog'),
-    loadGCS = document.getElementById('LoadGCSettings');
-
-var GCS = {
-    luaPath: document.getElementById('LuaPath'),
-    sPort: document.getElementById('ServerPort'),
-    sIP: document.getElementById('ServerIP'),
-    gIP: document.getElementById('GameIP'),
-    aAcc: document.getElementById('AutoAccount'),
-    stm: document.getElementById('Stamina')
+let CmdDialog = {
+    dialog: new mdui.Dialog('#CmdDialog', { modal: true }),
+    content: document.getElementById('CmdContent'),
+    log: document.getElementById('CmdLog'),
+    confirmBtn: document.getElementById('CmdConfirmBtn')
 };
 
-function Caution(message) {
-    mdui.snackbar({ message: message, position: 'left-bottom' });
-}
+let GCSettings = {
+    luaFolderPath: document.getElementById('LuaPath'),
+    serverBindPort: document.getElementById('ServerPort'),
+    serverIP: document.getElementById('ServerIP'),
+    gameIP: document.getElementById('GameIP'),
+    autoCreateAccount: document.getElementById('AutoAccount'),
+    useStamia: document.getElementById('Stamina')
+};
 
-function WriteConf() {
-    ipc.send('WriteConf', { Path: confPath, Obj: launcherConfig });
-}
-
-function AsyncSysCommand(title, command, cwd) {
-    configDialog.open();
-    configContent.innerHTML = title;
-    ipc.send('DoSysCommand', {
-        Command: command,
-        Cwd: cwd
-    });
-    ipc.once('SysCommandReturn', (event, args) => {
-        configConfirm.removeAttribute('disabled');
-        console.log('return');
-        if (args.Error == null) {
-            configLog.innerHTML = 'success. ' + args.Return;
-        } else {
-            configLog.innerHTML = 'error.\n' + args.Error;
-        }
-        console.log(args.Return);
-        console.error(args.Error);
-        console.log(args.Stderr);
-    });
-}
+let Elements = {
+    autoUpdate: document.getElementById('AutoUpdate'),
+    useMongoService: document.getElementById('UseMongoService'),
+    useJDKPath: document.getElementById('UseJDKPath'),
+    useGitPath: document.getElementById('UseGitPath'),
+    loadGCSettings: document.getElementById('LoadGCSettings'),
+    resetConfig: document.getElementById('ResetConfig'),
+    removeall: document.getElementById('RemoveAll')
+};
 
 window.onload = function () {
-    ipc.send('GetAppPath', {});
-    ipc.once('ReturnAppPath', (event, args) => {
+    ipcRenderer.send('GetAppPath', {});
+    ipcRenderer.once('ReturnAppPath', (event, args) => {
         appPath = args.Path;
         console.log(appPath);
-    });
-    ipc.send('ReadConf', { Path: confPath });
-    ipc.once('ConfContent', (event, args) => {
-        launcherConfig = args.Obj;
-        launcherConfig.AutoUpdate ? AutoUpdate.setAttribute('checked', true) : {};
-        launcherConfig.UseMongoService ? UseMongoService.setAttribute('checked', true) : {};
-        launcherConfig.UseJDKPath ? UseJDKPath.setAttribute('checked', true) : {};
-        launcherConfig.UseGitPath ? UseGitPath.setAttribute('checked', true) : {};
-    });
-    ipc.send('GetStats', {});
-    ipc.once('StatsReturn', (event, args) => {
-        stats = args.Stats;
-        if (stats.hasGC) {
-            loadGCS.removeAttribute('disabled');
-        }
+        ipcRenderer.send('ReadJson', { Path: path.join(appPath, confPath) });
+        ipcRenderer.once('JsonContent', (event, args) => {
+            launcherConf = args.Obj;
+            launcherConf.AutoUpdate ? Elements.autoUpdate.setAttribute('checked', true) : {};
+            launcherConf.UseMongoService ? Elements.useMongoService.setAttribute('checked', true) : {};
+            launcherConf.UseJDKPath ? Elements.useJDKPath.setAttribute('checked', true) : {};
+            launcherConf.UseGitPath ? Elements.useGitPath.setAttribute('checked', true) : {};
+        });
+        ipcRenderer.send('GetStats', {});
+        ipcRenderer.once('StatsReturn', (event, args) => {
+            fileStats = args.Stats;
+            if (fileStats.hasGCConfig) {
+                Elements.loadGCSettings.removeAttribute('disabled');
+            }
+        });
     });
 };
-
-AutoUpdate.addEventListener('click', () => {
-    if (AutoUpdate.checked) {
-        Caution('请确保已经存在Git并已在启动器中设置。打开后会在你每次进入配置页面时自动更新（不编译）。');
-        launcherConfig.AutoUpdate = true;
-        WriteConf();
-    } else {
-        launcherConfig.AutoUpdate = false;
-        WriteConf();
-    }
-});
-
-UseMongoService.addEventListener('click', () => {
-    if (UseMongoService.checked) {
-        Caution('请确保系统中已经设置并启用了MongoDB服务。');
-        launcherConfig.UseMongoService = true;
-        WriteConf();
-    } else {
-        launcherConfig.UseMongoService = false;
-        WriteConf();
-    }
-});
-
-UseJDKPath.addEventListener('click', () => {
-    if (UseJDKPath.checked) {
-        Caution('请确保系统中有JDK17以上的JDK环境，并且设置了Path和JAVA_HOME。');
-        launcherConfig.UseJDKPath = true;
-        WriteConf();
-    } else {
-        launcherConfig.UseJDKPath = false;
-        WriteConf();
-    }
-});
-
-UseGitPath.addEventListener('click', () => {
-    if (UseGitPath.checked) {
-        Caution('请确保设置了Git的环境变量。');
-        launcherConfig.UseGitPath = true;
-        WriteConf();
-    } else {
-        launcherConfig.UseGitPath = false;
-        WriteConf();
-    }
-});
 
 function RemoveAll() {
     let commands = [];
-    if (stats.hasJDK) { commands.push('rd /q /s .\\jdk17.0.3+7'); }
-    if (stats.hasMongo) {
+    if (fileStats.hasJDK) { commands.push('rd /q /s .\\jdk17.0.3+7'); }
+    if (fileStats.hasMongo) {
         commands.push('rd /q /s .\\mongodb-win32-x86_64-windows-5.0.8\\bin');
         commands.push('del /q /s .\\mongodb-win32-x86_64-windows-5.0.8\\data\\*.*');
     }
-    if (stats.hasGit) { commands.push('rd /q /s .\\git'); }
-    if (stats.hasGC) { commands.push('rd /q /s .\\Grasscutter'); }
-    if (stats.hasGCR) { commands.push('rd /q /s .\\Grasscutter_Resources'); }
-    AsyncSysCommand(
+    if (fileStats.hasGit) { commands.push('rd /q /s .\\git'); }
+    if (fileStats.hasGC) { commands.push('rd /q /s .\\Grasscutter'); }
+    if (fileStats.hasGCR) { commands.push('rd /q /s .\\Grasscutter_Resources'); }
+    AsyncSysCmd(
         '正在删除全部内容...',
         commands,
         ''
     );
 }
 
-document.getElementById('ResetConfig').addEventListener('click', () => {
-    ipc.send('ReadConf', { Path: 'conf/defaultconfig.json' });
-    ipc.once('ConfContent', (event, args) => {
-        ipc.send('WriteConf', { Path: confPath, Obj: args.Obj });
+function Caution(message) {
+    mdui.snackbar({ message: message, position: 'left-bottom' });
+}
+
+function WriteConf() {
+    ipcRenderer.send('WriteJson', { Path: path.join(appPath, confPath), Obj: launcherConf });
+}
+
+function AsyncSysCmd(title, command, cwd) {
+    CmdDialog.dialog.open();
+    CmdDialog.content.innerHTML = title;
+    let currentCwd = path.join(appPath, 'resources', cwd);
+    ipcRenderer.send('DoCmd', { Cmds: command, Cwd: currentCwd });
+    ipcRenderer.on('CmdLog', (event, args) => {
+        console.log(args.Data);
+        CmdDialog.log.innerHTML += args.Data;
+    });
+    ipcRenderer.once('CmdReturn', (event, args) => {
+        CmdDialog.confirmBtn.removeAttribute('disabled');
+        ipcRenderer.removeAllListeners('CmdLog');
+        if (args.Error == null) {
+            CmdDialog.log.innerHTML = args.Return + '\nSuccess.';
+            Caution('执行成功');
+        } else {
+            CmdDialog.log.innerHTML += '\nExecute failed. Exit because of ' + args.Error;
+            console.error(args.Error);
+            Caution('执行失败');
+        }
+    });
+}
+
+Elements.autoUpdate.addEventListener('click', () => {
+    if (Elements.autoUpdate.checked) {
+        Caution('请确保已经存在Git并已在启动器中设置。打开后会在你每次进入配置页面时自动更新（不编译）。');
+        launcherConf.AutoUpdate = true;
+        WriteConf();
+    } else {
+        launcherConf.AutoUpdate = false;
+        WriteConf();
+    }
+});
+
+Elements.useMongoService.addEventListener('click', () => {
+    if (Elements.useMongoService.checked) {
+        Caution('请确保系统中已经设置并启用了MongoDB服务。');
+        launcherConf.UseMongoService = true;
+        WriteConf();
+    } else {
+        launcherConf.UseMongoService = false;
+        WriteConf();
+    }
+});
+
+Elements.useJDKPath.addEventListener('click', () => {
+    if (Elements.useJDKPath.checked) {
+        Caution('请确保系统中有JDK17以上的JDK环境，并且设置了Path和JAVA_HOME。');
+        launcherConf.UseJDKPath = true;
+        WriteConf();
+    } else {
+        launcherConf.UseJDKPath = false;
+        WriteConf();
+    }
+});
+
+Elements.useGitPath.addEventListener('click', () => {
+    if (Elements.useGitPath.checked) {
+        Caution('请确保设置了Git的环境变量。');
+        launcherConf.UseGitPath = true;
+        WriteConf();
+    } else {
+        launcherConf.UseGitPath = false;
+        WriteConf();
+    }
+});
+
+Elements.resetConfig.addEventListener('click', () => {
+    ipcRenderer.send('ReadJson', { Path: path.join(appPath, 'conf/defaultconfig.json') });
+    ipcRenderer.once('JsonContent', (event, args) => {
+        ipcRenderer.send('WriteJson', { Path: path.join(appPath, confPath), Obj: args.Obj });
         location.reload();
     });
 });
 
-document.getElementById('RemoveAll').addEventListener('click', () => {
+Elements.removeall.addEventListener('click', () => {
     mdui.snackbar({
         message: '您确定要删除所有已下载资源吗？',
         buttonText: '确定',
@@ -156,27 +162,27 @@ document.getElementById('RemoveAll').addEventListener('click', () => {
     });
 });
 
-loadGCS.addEventListener('click', () => {
+Elements.loadGCSettings.addEventListener('click', () => {
     let GCConfig;
-    ipc.send('ReadConf', { Path: 'resources/Grasscutter/config.json' });
-    ipc.once('ConfContent', (event, args) => {
+    ipcRenderer.send('ReadConf', { Path: 'resources/Grasscutter/config.json' });
+    ipcRenderer.once('ConfContent', (event, args) => {
         GCConfig = args.Obj;
         console.log(GCConfig);
         document.getElementById('GCSettings').removeAttribute('class');
-        GCS.luaPath.value = GCConfig.folderStructure.scripts;
-        GCS.sPort.value = GCConfig.server.http.bindPort;
-        GCS.sIP.value = GCConfig.server.http.accessAddress;
-        GCS.gIP.value = GCConfig.server.game.accessAddress;
-        GCConfig.account.autoCreate ? GCS.aAcc.setAttribute('checked', '') : {};
-        GCConfig.server.game.gameOptions.staminaUsage ? GCS.stm.setAttribute('checked', '') : {};
+        GCSettings.luaFolderPath.value = GCConfig.folderStructure.scripts;
+        GCSettings.serverBindPort.value = GCConfig.server.http.bindPort;
+        GCSettings.serverIP.value = GCConfig.server.http.accessAddress;
+        GCSettings.gameIP.value = GCConfig.server.game.accessAddress;
+        GCConfig.account.autoCreate ? GCSettings.autoCreateAccount.setAttribute('checked', '') : {};
+        GCConfig.server.game.gameOptions.staminaUsage ? GCSettings.useStamia.setAttribute('checked', '') : {};
         document.getElementById('SaveChanges').addEventListener('click', () => {
-            GCConfig.folderStructure.scripts = GCS.luaPath.value;
-            GCConfig.server.http.bindPort = GCS.sPort.value;
-            GCConfig.server.http.accessAddress = GCS.sIP.value;
-            GCConfig.server.game.accessAddress = GCS.gIP.value;
-            GCConfig.account.autoCreate = GCS.aAcc.checked;
-            GCConfig.server.game.gameOptions.staminaUsage = GCS.stm.checked;
-            ipc.send('WriteConf', { Path: 'resources/Grasscutter/config.json', Obj: GCConfig });
+            GCConfig.folderStructure.scripts = GCSettings.luaFolderPath.value;
+            GCConfig.server.http.bindPort = GCSettings.serverBindPort.value;
+            GCConfig.server.http.accessAddress = GCSettings.serverIP.value;
+            GCConfig.server.game.accessAddress = GCSettings.gameIP.value;
+            GCConfig.account.autoCreate = GCSettings.autoCreateAccount.checked;
+            GCConfig.server.game.gameOptions.staminaUsage = GCSettings.useStamia.checked;
+            ipcRenderer.send('WriteConf', { Path: 'resources/Grasscutter/config.json', Obj: GCConfig });
         });
     });
 });

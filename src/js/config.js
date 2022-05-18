@@ -1,40 +1,44 @@
-var ipc = require('electron').ipcRenderer;
-var shell = require('electron').shell;
-var path = require('path');
-var fs = require('fs');
+const { ipcRenderer } = require('electron');
+const { shell } = require('electron');
+const path = require('path');
+const fs = require('fs');
 
-var appPath, stats, config, confPath = 'conf/config.json';
+let appPath, fileStats, launcherConf, gitPath, confPath = 'conf/config.json';
 
-var configDialog = new mdui.Dialog('#Config', { modal: true });
+let CmdDialog = {
+    dialog: new mdui.Dialog('#CmdDialog', { modal: true }),
+    content: document.getElementById('CmdContent'),
+    log: document.getElementById('CmdLog'),
+    confirmBtn: document.getElementById('CmdConfirmBtn')
+};
 
-var configContent = document.getElementById('ConfigContent'),
-    configConfirm = document.getElementById('ConfigConfirm'),
-    configLog = document.getElementById('ConfigLog');
-
-var GCUpdate = document.getElementById('GrasscutterUpdate'),
-    GCCompile = document.getElementById('GrasscutterCompile'),
-    GCPrecompile = document.getElementById('GrasscutterPrecompile'),
-    configureGC = document.getElementById('ConfigureGC'),
-    changeBranch = document.getElementById('ChangeBranch');
+let Elements = {
+    updateGC: document.getElementById('GrasscutterUpdate'),
+    compileGC: document.getElementById('GrasscutterCompile'),
+    precompileGC: document.getElementById('GrasscutterPrecompile'),
+    configureGC: document.getElementById('ConfigureGC'),
+    changeBranch: document.getElementById('ChangeBranch')
+};
 
 window.onload = function () {
-    ipc.send('GetAppPath', {});
-    ipc.once('ReturnAppPath', (event, args) => {
+    ipcRenderer.send('GetAppPath', {});
+    ipcRenderer.once('ReturnAppPath', (event, args) => {
         appPath = args.Path;
         console.log(appPath);
-    });
-    ipc.send('ReadConf', { Path: confPath });
-    ipc.once('ConfContent', (event, args) => {
-        config = args.Obj;
-        if (config.AutoUpdate) {
-            FileCommand(
-                '正在从github拉取更新...',
-                config.UseGitPath ? 'git' : path.join(appPath, 'resources/git/cmd/git.exe'),
-                'pull',
-                'Grasscutter'
-            );
-        }
-        setInterval(UpdateStats(), 500);
+        ipcRenderer.send('ReadJson', { Path: path.join(appPath, confPath) });
+        ipcRenderer.once('JsonContent', (event, args) => {
+            launcherConf = args.Obj;
+            gitPath = launcherConf.UseGitPath ? 'git' : path.join(appPath, 'resources/git/cmd/git.exe');
+            if (launcherConf.AutoUpdate) {
+                AsyncSysCmd(
+                    '正在从github拉取更新...',
+                    [gitPath + 'pull'],
+                    'Grasscutter'
+                );
+            }
+            UpdateStats();
+            setInterval(UpdateStats, 500);
+        });
     });
 };
 
@@ -43,106 +47,81 @@ function Caution(message) {
 }
 
 function UpdateStats() {
-    ipc.send('GetStats', {});
-    ipc.once('StatsReturn', (event, args) => {
-        stats = args.Stats;
-        if ((stats.hasGit || config.UseGitPath) && stats.hasGC) {
-            GCUpdate.removeAttribute('disabled');
-            changeBranch.removeAttribute('disabled');
+    ipcRenderer.send('GetStats', {});
+    ipcRenderer.once('StatsReturn', (event, args) => {
+        fileStats = args.Stats;
+        if ((fileStats.hasGit || launcherConf.UseGitPath) && fileStats.hasGC) {
+            Elements.updateGC.removeAttribute('disabled');
+            Elements.changeBranch.removeAttribute('disabled');
         } else {
-            GCUpdate.setAttribute('disabled', 'true');
-            changeBranch.setAttribute('disabled', 'true');
+            Elements.updateGC.setAttribute('disabled', 'true');
+            Elements.changeBranch.setAttribute('disabled', 'true');
         }
-        if ((stats.hasJDK || config.UseJDKPath) && stats.hasGC) {
-            if (stats.hasGCR) {
-                configureGC.setAttribute('class', 'mdui-list-item mdui-ripple');
+        if ((fileStats.hasJDK || launcherConf.UseJDKPath) && fileStats.hasGC) {
+            if (fileStats.hasGCR) {
+                Elements.configureGC.setAttribute('class', 'mdui-list-item mdui-ripple');
             } else {
-                configureGC.setAttribute('class', 'mdui-list-item mdui-text-color-grey');
+                Elements.configureGC.setAttribute('class', 'mdui-list-item mdui-text-color-grey');
             }
-            GCCompile.removeAttribute('disabled');
-            GCPrecompile.setAttribute('class', 'mdui-list-item mdui-ripple');
+            Elements.compileGC.removeAttribute('disabled');
+            Elements.precompileGC.setAttribute('class', 'mdui-list-item mdui-ripple');
         } else {
-            GCCompile.setAttribute('disabled', 'true');
-            GCPrecompile.setAttribute('class', 'mdui-list-item mdui-text-color-grey');
-            configureGC.setAttribute('class', 'mdui-list-item mdui-text-color-grey');
+            Elements.compileGC.setAttribute('disabled', 'true');
+            Elements.precompileGC.setAttribute('class', 'mdui-list-item mdui-text-color-grey');
+            Elements.configureGC.setAttribute('class', 'mdui-list-item mdui-text-color-grey');
         }
     });
 }
 
-function FileCommand(title, path, other, cwd) {
-    configDialog.open();
-    configContent.innerHTML = title;
-    ipc.send('DoFileCommand', {
-        Path: path,
-        Other: other,
-        Cwd: cwd
+function AsyncSysCmd(title, command, cwd) {
+    CmdDialog.dialog.open();
+    CmdDialog.content.innerHTML = title;
+    let currentCwd = path.join(appPath, 'resources', cwd);
+    ipcRenderer.send('DoCmd', { Cmds: command, Cwd: currentCwd });
+    ipcRenderer.on('CmdLog', (event, args) => {
+        console.log(args.Data);
+        CmdDialog.log.innerHTML += args.Data;
     });
-    ipc.once('FileCommandLog', (event, args) => {
-        configLog.innerHTML = args.Log;
-        console.log(args.Log);
-    });
-    ipc.once('FileCommandReturn', (event, args) => {
-        configConfirm.removeAttribute('disabled');
-        if (args.Return == 0) {
-            configLog.innerHTML += 'success.';
-            Caution('执行完毕');
-        } else {
-            configLog.innerHTML = 'execute failed. exit with code ' + args.Return;
-            Caution('执行失败');
-        }
-    });
-}
-
-function AsyncSysCommand(title, command, cwd) {
-    configDialog.open();
-    configContent.innerHTML = title;
-    ipc.send('DoSysCommand', {
-        Command: command,
-        Cwd: cwd
-    });
-    ipc.once('SysCommandReturn', (event, args) => {
-        configConfirm.removeAttribute('disabled');
-        console.log('return');
+    ipcRenderer.once('CmdReturn', (event, args) => {
+        CmdDialog.confirmBtn.removeAttribute('disabled');
+        ipcRenderer.removeAllListeners('CmdLog');
         if (args.Error == null) {
-            configLog.innerHTML = 'success. ' + args.Return;
-            Caution('执行完毕');
+            CmdDialog.log.innerHTML = args.Return + '\nSuccess.';
+            Caution('执行成功');
         } else {
-            configLog.innerHTML = 'error.\n' + args.Error;
+            CmdDialog.log.innerHTML += '\nExecute failed. Exit because of ' + args.Error;
+            console.error(args.Error);
             Caution('执行失败');
         }
-        console.log(args.Return);
-        console.error(args.Error);
-        console.log(args.Stderr);
     });
 }
 
-configConfirm.addEventListener('click', () => {
-    configConfirm.setAttribute('disabled', 'true');
-    configLog.innerHTML = '';
+CmdDialog.confirmBtn.addEventListener('click', () => {
+    CmdDialog.log.innerHTML = '';
+    CmdDialog.confirmBtn.setAttribute('disabled', 'true');
 });
 
-GCUpdate.addEventListener('click', () => {
-    FileCommand(
+Elements.updateGC.addEventListener('click', () => {
+    AsyncSysCmd(
         '正在从github拉取更新...',
-        config.UseGitPath ? 'git' : path.join(appPath, 'resources/git/cmd/git.exe'),
-        'pull',
+        [gitPath + 'pull'],
         'Grasscutter'
     );
 });
 
-GCCompile.addEventListener('click', () => {
+Elements.compileGC.addEventListener('click', () => {
     let jdkPath = path.join(appPath, 'resources\\jdk-17.0.3+7');
-    AsyncSysCommand(
+    AsyncSysCmd(
         '正在编译为Jar File...',
-        config.UseJDKPath ?
+        launcherConf.UseJDKPath ?
             ['.\\gradlew jar'] :
             ['set JAVA_HOME=' + jdkPath, '.\\gradlew jar'],
         'Grasscutter'
     );
 });
 
-GCPrecompile.addEventListener('click', () => {
-    if ((stats.hasJDK || config.UseJDKPath) && stats.hasGC) {
+Elements.precompileGC.addEventListener('click', () => {
+    if ((fileStats.hasJDK || launcherConf.UseJDKPath) && fileStats.hasGC) {
         let jdkPath = path.join(appPath, 'resources/jdk-17.0.3+7');
         let gradlewBatPath = path.join(appPath, 'resources\\Grasscutter\\gradlew.bat');
         let gradlewBatClonePath = path.join(appPath, 'resources\\Grasscutter\\gradlewclone.bat');
@@ -154,15 +133,15 @@ GCPrecompile.addEventListener('click', () => {
             gradlewBatContent = fs.readFileSync(gradlewBatPath);
             fs.writeFileSync(gradlewBatClonePath, gradlewBatContent);
         }
-        fs.writeFileSync(gradlewBatPath, config.UseJDKPath ? '' : 'set JAVA_HOME=' + jdkPath + '\n');
+        fs.writeFileSync(gradlewBatPath, launcherConf.UseJDKPath ? '' : 'set JAVA_HOME=' + jdkPath + '\n');
         fs.appendFileSync(gradlewBatPath, gradlewBatContent);
         shell.openPath(gradlewBatPath);
     }
 });
 
-configureGC.addEventListener('click', () => {
-    if ((stats.hasJDK || config.UseJDKPath) && stats.hasGC && stats.hasGCR) {
-        AsyncSysCommand(
+Elements.configureGC.addEventListener('click', () => {
+    if ((fileStats.hasJDK || launcherConf.UseJDKPath) && fileStats.hasGC && fileStats.hasGCR) {
+        AsyncSysCmd(
             '正在配置Grasscutter...',
             [
                 'mkdir .\\Grasscutter\\resources',
@@ -174,14 +153,13 @@ configureGC.addEventListener('click', () => {
     }
 });
 
-changeBranch.addEventListener('click', () => {
-    if ((stats.hasGit || config.UseGitPath) && stats.hasGC) {
+Elements.changeBranch.addEventListener('click', () => {
+    if ((fileStats.hasGit || launcherConf.UseGitPath) && fileStats.hasGC) {
         let branchName = document.getElementById('BranchInput').value;
         console.log(branchName);
-        FileCommand(
+        AsyncSysCmd(
             '正在切换分支到' + branchName,
-            config.UseGitPath ? 'git' : path.join(appPath, 'resources/git/cmd/git.exe'),
-            'checkout ' + branchName,
+            [gitPath + 'checkout ' + branchName],
             'Grasscutter'
         );
     }

@@ -14,7 +14,6 @@ window.onload = function () {
         appPath = args.Path;
         console.log(appPath);
         let filePath = path.join(appPath, 'resources\\Grasscutter');
-
         fs.readdir(filePath, function (err, files) {
             if (!err) {
                 files.forEach(function (fileName) {
@@ -33,11 +32,11 @@ window.onload = function () {
                 });
             }
         });
-    });
-    ipc.send('ReadConf', { Path: confPath });
-    ipc.once('ConfContent', (event, args) => {
-        config = args.Obj;
-        UpdateStats();
+        ipc.send('ReadJson', { Path: path.join(appPath, confPath) });
+        ipc.once('JsonContent', (event, args) => {
+            config = args.Obj;
+            UpdateStats();
+        });
     });
 };
 
@@ -45,7 +44,7 @@ function UpdateStats() {
     ipc.send('GetStats', {});
     ipc.once('StatsReturn', (event, args) => {
         stats = args.Stats;
-        if ((stats.hasJDK || config.UseJDKPath) && (stats.hasMongo || config.UseMongoService)) {
+        if ((stats.hasJDK || config.UseJDKPath) && (stats.hasMongo || config.UseMongoService) && stats.hasGC) {
             document.getElementById('LaunchGame').removeAttribute('disabled');
         } else {
             document.getElementById('LaunchGame').setAttribute('disabled', 'true');
