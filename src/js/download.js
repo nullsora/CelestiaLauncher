@@ -77,20 +77,22 @@ function DownloadAndUnzipFile(title, url, name, unzipPath) {
         if (args.Progress >= 100) {
             ProgressDialog.progress.style.width = '0%';
             ipcRenderer.removeAllListeners('DownloadProgress');
-            ProgressDialog.content.innerHTML = '正在安装' + title + '...';
-            ipcRenderer.send('Unzip', {
-                FilePath: path.join(downloadPath, name),
-                ExPath: path.join(downloadPath, unzipPath)
-            });
-            ipcRenderer.on('UnzipProgress', (event, args) => {
-                ProgressDialog.progress.style.width = args.Progress + '%';
-            });
-            ipcRenderer.once('UnzipFinish', (event, args) => {
-                ProgressDialog.confirmBtn.removeAttribute('disabled');
-                ProgressDialog.content.innerHTML = '已完成.';
-                Caution('下载已完成');
-                ipcRenderer.removeAllListeners('UnzipProgress');
-            });
+            setTimeout(() => {
+                ProgressDialog.content.innerHTML = '正在解压' + title + '...';
+                ipcRenderer.send('Unzip', {
+                    FilePath: path.join(downloadPath, name),
+                    ExPath: path.join(downloadPath, unzipPath)
+                });
+                ipcRenderer.on('UnzipProgress', (event, args) => {
+                    ProgressDialog.progress.style.width = args.Progress + '%';
+                });
+                ipcRenderer.once('UnzipFinish', (event, args) => {
+                    ProgressDialog.confirmBtn.removeAttribute('disabled');
+                    ProgressDialog.content.innerHTML = '已完成.';
+                    Caution('下载已完成');
+                    ipcRenderer.removeAllListeners('UnzipProgress');
+                });
+            }, 200);
         }
     });
 }

@@ -104,7 +104,7 @@ CmdDialog.confirmBtn.addEventListener('click', () => {
 Elements.updateGC.addEventListener('click', () => {
     AsyncSysCmd(
         '正在从github拉取更新...',
-        [gitPath + 'pull'],
+        [gitPath + ' pull'],
         'Grasscutter'
     );
 });
@@ -159,7 +159,7 @@ Elements.changeBranch.addEventListener('click', () => {
         console.log(branchName);
         AsyncSysCmd(
             '正在切换分支到' + branchName,
-            [gitPath + 'checkout ' + branchName],
+            [gitPath + ' checkout ' + branchName],
             'Grasscutter'
         );
     }

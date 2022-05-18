@@ -70,6 +70,10 @@ pre {
     padding-right: 8px;
 }
 
+.mdui-dialog {
+    height: 200px;
+}
+
 @keyframes Animation {
     0% {
         opacity: 0;

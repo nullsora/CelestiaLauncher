@@ -54,7 +54,7 @@ window.onload = function () {
 
 function RemoveAll() {
     let commands = [];
-    if (fileStats.hasJDK) { commands.push('rd /q /s .\\jdk17.0.3+7'); }
+    if (fileStats.hasJDK) { commands.push('rd /q /s .\\jdk-17.0.3+7'); }
     if (fileStats.hasMongo) {
         commands.push('rd /q /s .\\mongodb-win32-x86_64-windows-5.0.8\\bin');
         commands.push('del /q /s .\\mongodb-win32-x86_64-windows-5.0.8\\data\\*.*');
@@ -164,8 +164,8 @@ Elements.removeall.addEventListener('click', () => {
 
 Elements.loadGCSettings.addEventListener('click', () => {
     let GCConfig;
-    ipcRenderer.send('ReadConf', { Path: 'resources/Grasscutter/config.json' });
-    ipcRenderer.once('ConfContent', (event, args) => {
+    ipcRenderer.send('ReadJson', { Path: 'resources/Grasscutter/config.json' });
+    ipcRenderer.once('JsonContent', (event, args) => {
         GCConfig = args.Obj;
         console.log(GCConfig);
         document.getElementById('GCSettings').removeAttribute('class');
