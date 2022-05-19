@@ -1,7 +1,7 @@
 const { ipcRenderer } = require('electron');
 const path = require('path');
 
-let appPath, fileStats, launcherConf, gitPath, confPath = 'conf/config.json';
+let appPath, resPath, fileStats, launcherConf, gitPath, confPath = 'conf/config.json';
 
 let ProgressDialog = {
     dialog: new mdui.Dialog('#ProgressDialog', { modal: true }),
@@ -29,12 +29,13 @@ let Elements = {
 window.onload = function () {
     ipcRenderer.send('GetAppPath', {});
     ipcRenderer.once('ReturnAppPath', (event, args) => {
-        appPath = args.Path;
+        appPath = args.ProgramPath;
+        resPath = args.ResourcesPath;
         console.log(appPath);
-        ipcRenderer.send('ReadJson', { Path: path.join(appPath, confPath) });
+        ipcRenderer.send('ReadJson', { Path: path.join(resPath, confPath) });
         ipcRenderer.once('JsonContent', (event, args) => {
             launcherConf = args.Obj;
-            gitPath = launcherConf.UseGitPath ? 'git' : path.join(appPath, 'resources/git/cmd/git.exe');
+            gitPath = launcherConf.UseGitPath ? 'git' : path.join(appPath, 'game/git/cmd/git.exe');
             UpdateStats();
             setInterval(UpdateStats, 500);
         });
@@ -64,7 +65,7 @@ function DownloadAndUnzipFile(title, url, name, unzipPath) {
     ProgressDialog.content.innerHTML = '正在下载' + title + '...';
     ProgressDialog.dialog.open();
     ProgressDialog.progress.style.width = '0%';
-    let downloadPath = path.join(appPath, 'resources');
+    let downloadPath = path.join(appPath, 'game');
     ipcRenderer.send('Download', {
         URL: url,
         Name: name,
@@ -105,7 +106,7 @@ ProgressDialog.confirmBtn.addEventListener('click', () => {
 function AsyncSysCmd(title, command, cwd) {
     CmdDialog.dialog.open();
     CmdDialog.content.innerHTML = title;
-    let currentCwd = path.join(appPath, 'resources', cwd);
+    let currentCwd = path.join(appPath, 'game', cwd);
     ipcRenderer.send('DoCmd', { Cmds: command, Cwd: currentCwd });
     ipcRenderer.on('CmdLog', (event, args) => {
         console.log(args.Data);
@@ -115,10 +116,10 @@ function AsyncSysCmd(title, command, cwd) {
         CmdDialog.confirmBtn.removeAttribute('disabled');
         ipcRenderer.removeAllListeners('CmdLog');
         if (args.Error == null) {
-            CmdDialog.log.innerHTML = args.Return + '\nSuccess.';
+            CmdDialog.log.innerHTML = 'Success.\n' + args.Return;
             Caution('执行成功');
         } else {
-            CmdDialog.log.innerHTML += '\nExecute failed. Exit because of ' + args.Error;
+            CmdDialog.log.innerHTML += 'Execute failed. Exit because of ' + args.Error;
             console.error(args.Error);
             Caution('执行失败');
         }

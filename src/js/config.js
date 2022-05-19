@@ -3,7 +3,7 @@ const { shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
-let appPath, fileStats, launcherConf, gitPath, confPath = 'conf/config.json';
+let appPath, resPath, fileStats, launcherConf, gitPath, confPath = 'conf/config.json';
 
 let CmdDialog = {
     dialog: new mdui.Dialog('#CmdDialog', { modal: true }),
@@ -23,12 +23,13 @@ let Elements = {
 window.onload = function () {
     ipcRenderer.send('GetAppPath', {});
     ipcRenderer.once('ReturnAppPath', (event, args) => {
-        appPath = args.Path;
+        appPath = args.ProgramPath;
+        resPath = args.ResourcesPath;
         console.log(appPath);
-        ipcRenderer.send('ReadJson', { Path: path.join(appPath, confPath) });
+        ipcRenderer.send('ReadJson', { Path: path.join(resPath, confPath) });
         ipcRenderer.once('JsonContent', (event, args) => {
             launcherConf = args.Obj;
-            gitPath = launcherConf.UseGitPath ? 'git' : path.join(appPath, 'resources/git/cmd/git.exe');
+            gitPath = launcherConf.UseGitPath ? 'git' : path.join(appPath, 'game/git/cmd/git.exe');
             if (launcherConf.AutoUpdate) {
                 AsyncSysCmd(
                     '正在从github拉取更新...',
@@ -76,7 +77,7 @@ function UpdateStats() {
 function AsyncSysCmd(title, command, cwd) {
     CmdDialog.dialog.open();
     CmdDialog.content.innerHTML = title;
-    let currentCwd = path.join(appPath, 'resources', cwd);
+    let currentCwd = path.join(appPath, 'game', cwd);
     ipcRenderer.send('DoCmd', { Cmds: command, Cwd: currentCwd });
     ipcRenderer.on('CmdLog', (event, args) => {
         console.log(args.Data);
@@ -86,10 +87,10 @@ function AsyncSysCmd(title, command, cwd) {
         CmdDialog.confirmBtn.removeAttribute('disabled');
         ipcRenderer.removeAllListeners('CmdLog');
         if (args.Error == null) {
-            CmdDialog.log.innerHTML = args.Return + '\nSuccess.';
+            CmdDialog.log.innerHTML = 'Success.\n' + args.Return;
             Caution('执行成功');
         } else {
-            CmdDialog.log.innerHTML += '\nExecute failed. Exit because of ' + args.Error;
+            CmdDialog.log.innerHTML += 'Execute failed. Exit because of ' + args.Error;
             console.error(args.Error);
             Caution('执行失败');
         }
@@ -110,7 +111,7 @@ Elements.updateGC.addEventListener('click', () => {
 });
 
 Elements.compileGC.addEventListener('click', () => {
-    let jdkPath = path.join(appPath, 'resources\\jdk-17.0.3+7');
+    let jdkPath = path.join(appPath, 'game/jdk-17.0.3+7');
     AsyncSysCmd(
         '正在编译为Jar File...',
         launcherConf.UseJDKPath ?
@@ -122,9 +123,9 @@ Elements.compileGC.addEventListener('click', () => {
 
 Elements.precompileGC.addEventListener('click', () => {
     if ((fileStats.hasJDK || launcherConf.UseJDKPath) && fileStats.hasGC) {
-        let jdkPath = path.join(appPath, 'resources/jdk-17.0.3+7');
-        let gradlewBatPath = path.join(appPath, 'resources\\Grasscutter\\gradlew.bat');
-        let gradlewBatClonePath = path.join(appPath, 'resources\\Grasscutter\\gradlewclone.bat');
+        let jdkPath = path.join(appPath, 'game/jdk-17.0.3+7');
+        let gradlewBatPath = path.join(appPath, 'game/Grasscutter/gradlew.bat');
+        let gradlewBatClonePath = path.join(appPath, 'game/Grasscutter/gradlewclone.bat');
         let gradlewBatContent;
         try {
             fs.accessSync(gradlewBatClonePath);

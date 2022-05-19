@@ -5,8 +5,7 @@ exports.InitJsonOperatorIn = function (win) {
     ipcMain.on('ReadJson', (event, args) => {
         let jsonPath = args.Path;
         fs.readFile(jsonPath, (err, data) => {
-            let jsonData = data.toString();
-            let jsonContent = JSON.parse(jsonData);
+            let jsonContent = JSON.parse(data);
             win.webContents.send('JsonContent', { Obj: jsonContent });
         });
     });

@@ -1,7 +1,7 @@
 const { ipcRenderer } = require('electron');
 const path = require('path');
 
-let appPath, fileStats, launcherConf, confPath = 'conf/config.json';
+let appPath, resPath, fileStats, launcherConf, confPath = 'conf/config.json';
 
 let CmdDialog = {
     dialog: new mdui.Dialog('#CmdDialog', { modal: true }),
@@ -32,9 +32,10 @@ let Elements = {
 window.onload = function () {
     ipcRenderer.send('GetAppPath', {});
     ipcRenderer.once('ReturnAppPath', (event, args) => {
-        appPath = args.Path;
+        appPath = args.ProgramPath;
+        resPath = args.ResourcesPath;
         console.log(appPath);
-        ipcRenderer.send('ReadJson', { Path: path.join(appPath, confPath) });
+        ipcRenderer.send('ReadJson', { Path: path.join(resPath, confPath) });
         ipcRenderer.once('JsonContent', (event, args) => {
             launcherConf = args.Obj;
             launcherConf.AutoUpdate ? Elements.autoUpdate.setAttribute('checked', true) : {};
@@ -57,13 +58,13 @@ function Caution(message) {
 }
 
 function WriteConf() {
-    ipcRenderer.send('WriteJson', { Path: path.join(appPath, confPath), Obj: launcherConf });
+    ipcRenderer.send('WriteJson', { Path: path.join(resPath, confPath), Obj: launcherConf });
 }
 
 function AsyncSysCmd(title, command, cwd) {
     CmdDialog.dialog.open();
     CmdDialog.content.innerHTML = title;
-    let currentCwd = path.join(appPath, 'resources', cwd);
+    let currentCwd = path.join(appPath, 'game', cwd);
     ipcRenderer.send('DoCmd', { Cmds: command, Cwd: currentCwd });
     ipcRenderer.on('CmdLog', (event, args) => {
         console.log(args.Data);
@@ -145,9 +146,9 @@ Elements.useGitPath.addEventListener('click', () => {
 });
 
 Elements.resetConfig.addEventListener('click', () => {
-    ipcRenderer.send('ReadJson', { Path: path.join(appPath, 'conf/defaultconfig.json') });
+    ipcRenderer.send('ReadJson', { Path: path.join(resPath, 'conf/defaultconfig.json') });
     ipcRenderer.once('JsonContent', (event, args) => {
-        ipcRenderer.send('WriteJson', { Path: path.join(appPath, confPath), Obj: args.Obj });
+        ipcRenderer.send('WriteJson', { Path: path.join(resPath, confPath), Obj: args.Obj });
         location.reload();
     });
 });
@@ -164,7 +165,7 @@ Elements.removeall.addEventListener('click', () => {
 
 Elements.loadGCSettings.addEventListener('click', () => {
     let GCConfig;
-    ipcRenderer.send('ReadJson', { Path: 'resources/Grasscutter/config.json' });
+    ipcRenderer.send('ReadJson', { Path: path.join(appPath, 'game/Grasscutter/config.json') });
     ipcRenderer.once('JsonContent', (event, args) => {
         GCConfig = args.Obj;
         console.log(GCConfig);
@@ -182,7 +183,7 @@ Elements.loadGCSettings.addEventListener('click', () => {
             GCConfig.server.game.accessAddress = GCSettings.gameIP.value;
             GCConfig.account.autoCreate = GCSettings.autoCreateAccount.checked;
             GCConfig.server.game.gameOptions.staminaUsage = GCSettings.useStamia.checked;
-            ipcRenderer.send('WriteConf', { Path: 'resources/Grasscutter/config.json', Obj: GCConfig });
+            ipcRenderer.send('WriteJson', { Path: path.join(appPath, 'game/Grasscutter/config.json'), Obj: GCConfig });
         });
     });
 });

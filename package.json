@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "electron .",
     "pack": "electron-packager ./ Celestia-Launcher --out ./build --overwrite --platform=win32 --icon=./src/res/img/CL.ico",
-    "build": "electron-builder"
+    "build": "electron-builder",
+    "release": "electron-builder build --win -p always"
   },
   "build": {
     "appId": "com.celestialauncher.app",
@@ -25,14 +26,28 @@
     "directories": {
       "output": "./build"
     },
+    "asar": false,
+    "extraResources": {
+      "from": "./game/",
+      "to": "../game"
+    },
     "nsis": {
       "oneClick": false,
       "allowElevation": true,
       "allowToChangeInstallationDirectory": true,
       "installerIcon": "./src/res/img/CL.ico",
       "createDesktopShortcut": true,
-      "shortcutName": "./src/res/img/CL.ico"
-    }
+      "shortcutName": "Celestia Launcher"
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "KL-kirito",
+        "repo": "CelestiaLauncher",
+        "private": false,
+        "releaseType": "draft"
+      }
+    ]
   },
   "repository": "https://github.com/KL-kirito/CelestiaLauncher",
   "keywords": [],
@@ -45,6 +60,7 @@
   },
   "dependencies": {
     "decompress-zip": "^0.3.3",
+    "electron-updater": "^5.0.1",
     "mdui": "^1.0.2"
   }
 }

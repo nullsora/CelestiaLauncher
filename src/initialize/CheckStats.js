@@ -1,13 +1,14 @@
 const fs = require('fs');
-const { app, ipcMain } = require('electron');
+const { ipcMain } = require('electron');
 const path = require('path');
+const cwd = process.cwd();
 const ResPath = {
-    JDK: path.join(app.getAppPath(), 'resources/jdk-17.0.3+7/bin/java.exe'),
-    Mongo: path.join(app.getAppPath(), 'resources/mongodb-win32-x86_64-windows-5.0.8/bin/mongod.exe'),
-    Git: path.join(app.getAppPath(), 'resources/git/cmd/git.exe'),
-    GC: path.join(app.getAppPath(), 'resources/Grasscutter/gradlew'),
-    GCR: path.join(app.getAppPath(), 'resources/Grasscutter_Resources/README.md'),
-    GCConfig: path.join(app.getAppPath(), 'resources/Grasscutter/config.json')
+    JDK: path.join(cwd, 'game/jdk-17.0.3+7/bin/java.exe'),
+    Mongo: path.join(cwd, 'game/mongodb-win32-x86_64-windows-5.0.8/bin/mongod.exe'),
+    Git: path.join(cwd, 'game/git/cmd/git.exe'),
+    GC: path.join(cwd, 'game/Grasscutter/gradlew'),
+    GCR: path.join(cwd, 'game/Grasscutter_Resources/README.md'),
+    GCConfig: path.join(cwd, 'game/Grasscutter/config.json')
 };
 
 exports.CheckFileStatsIn = function (win) {

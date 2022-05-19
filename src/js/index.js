@@ -5,15 +5,16 @@ var fs = require('fs');
 var { exec } = require('child_process');
 var $ = mdui.$;
 var jarSelect = new mdui.Select('#JarSelect');
-var appPath, stats, config, confPath = 'conf/config.json';
+var appPath, resPath, fileStats, launcherConf, confPath = 'conf/config.json';
 var jarPath = [];
 
 window.onload = function () {
     ipc.send('GetAppPath', {});
     ipc.once('ReturnAppPath', (event, args) => {
-        appPath = args.Path;
+        appPath = args.ProgramPath;
+        resPath = args.ResourcesPath;
         console.log(appPath);
-        let filePath = path.join(appPath, 'resources\\Grasscutter');
+        let filePath = path.join(appPath, 'game\\Grasscutter');
         fs.readdir(filePath, function (err, files) {
             if (!err) {
                 files.forEach(function (fileName) {
@@ -32,9 +33,9 @@ window.onload = function () {
                 });
             }
         });
-        ipc.send('ReadJson', { Path: path.join(appPath, confPath) });
+        ipc.send('ReadJson', { Path: path.join(resPath, confPath) });
         ipc.once('JsonContent', (event, args) => {
-            config = args.Obj;
+            launcherConf = args.Obj;
             UpdateStats();
         });
     });
@@ -43,8 +44,8 @@ window.onload = function () {
 function UpdateStats() {
     ipc.send('GetStats', {});
     ipc.once('StatsReturn', (event, args) => {
-        stats = args.Stats;
-        if ((stats.hasJDK || config.UseJDKPath) && (stats.hasMongo || config.UseMongoService) && stats.hasGC) {
+        fileStats = args.Stats;
+        if ((fileStats.hasJDK || launcherConf.UseJDKPath) && (fileStats.hasMongo || launcherConf.UseMongoService) && fileStats.hasGC) {
             document.getElementById('LaunchGame').removeAttribute('disabled');
         } else {
             document.getElementById('LaunchGame').setAttribute('disabled', 'true');
@@ -53,15 +54,15 @@ function UpdateStats() {
 }
 
 document.getElementById('LaunchGame').addEventListener('click', () => {
-    let mongoPath = path.join(appPath, 'resources\\launchmongo.bat');
-    let launchPath = path.join(appPath, 'resources\\launchgame.bat');
-    let jdkPath = path.join(appPath, 'resources\\jdk-17.0.3+7\\bin\\java.exe');
+    let mongoPath = path.join(appPath, 'game\\launchmongo.bat');
+    let launchPath = path.join(appPath, 'game\\launchgame.bat');
+    let jdkPath = path.join(appPath, 'game\\jdk-17.0.3+7\\bin\\java.exe');
     let value = document.getElementById('JarSelect').selectedIndex;
     let launchContent = '@echo off\ncd .\\Grasscutter\\\n' +
-        (config.UseJDKPath ? 'java' : jdkPath) +
+        (launcherConf.UseJDKPath ? 'java' : jdkPath) +
         ' -jar ' + jarPath[value];
     fs.writeFileSync(launchPath, launchContent);
-    config.UseMongoService ? {} : shell.openPath(mongoPath);
+    launcherConf.UseMongoService ? {} : shell.openPath(mongoPath);
     setTimeout(() => {
         shell.openPath(launchPath);
     }, 1000);
@@ -73,7 +74,7 @@ setTimeout(() => {
     let sendBtn = document.getElementById('GCSend');
     card.setAttribute('class', 'mdui-card mdui-hoverable');
     let run = exec(launchContent, {
-        cwd: path.join(appPath, 'resources/Grasscutter'),
+        cwd: path.join(appPath, 'game/Grasscutter'),
         maxBuffer: Infinity,
         encoding: 'gbk'
     }, (e, o, se) => {

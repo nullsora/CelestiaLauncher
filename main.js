@@ -1,14 +1,11 @@
-const electron = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
+
 const { InitDownloadEvtIn } = require('./src/initialize/FileOperate');
 const { InitUnzipEvtIn } = require('./src/initialize/FileOperate');
 const { InitJsonOperatorIn } = require('./src/initialize/JsonOperate');
 const { InitCmdExecuteIn } = require('./src/initialize/SysCommand');
 const { SendAppPathTo } = require('./src/initialize/GetAppPath');
 const { CheckFileStatsIn } = require('./src/initialize/CheckStats');
-
-const app = electron.app;
-const BrowserWindow = electron.BrowserWindow;
-const ipc = electron.ipcMain;
 
 let mainWindow;
 function createWindow() {
@@ -22,13 +19,14 @@ function createWindow() {
         }
     });
     mainWindow.loadFile('./src/index.html');
-    // mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
     InitDownloadEvtIn(mainWindow);
     InitUnzipEvtIn(mainWindow);
     InitJsonOperatorIn(mainWindow);
     InitCmdExecuteIn(mainWindow);
     SendAppPathTo(mainWindow);
     CheckFileStatsIn(mainWindow);
+    console.log(process.cwd());
     mainWindow.on('closed', () => {
         mainWindow = null;
     });
@@ -47,12 +45,12 @@ app.on('activate', () => {
     }
 });
 
-ipc.on('window-close', function () {
+ipcMain.on('window-close', function () {
     mainWindow.close();
 });
-ipc.on('window-max', function () {
+ipcMain.on('window-max', function () {
     mainWindow.isMaximized() ? mainWindow.restore() : mainWindow.maximize();
 });
-ipc.on('window-min', function () {
+ipcMain.on('window-min', function () {
     mainWindow.minimize();
 });

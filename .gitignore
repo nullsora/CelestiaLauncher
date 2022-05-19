@@ -1,7 +1,7 @@
 node_modules
 build
-resources/git
-resources/Grasscutter
-resources/Grasscutter_Resources
-resources/jdk-17.0.3+7
-resources/launchgame.bat
+game/git
+game/Grasscutter
+game/Grasscutter_Resources
+game/jdk-17.0.3+7
+game/launchgame.bat
