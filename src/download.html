@@ -22,10 +22,20 @@
                         <img src="./res/img/Download.jpg" />
                         <div class="mdui-card-media-covered mdui-card-media-covered-gradient">
                             <div class="mdui-card-primary">
-                                <div class="mdui-card-primary-title">资源下载</div>
-                                <div class="mdui-card-primary-subtitle">Grasscutter必备资源</div>
+                                <div class="mdui-card-primary-title">Grasscutter安装</div>
+                                <div class="mdui-card-primary-subtitle">资源，更新，编译</div>
                             </div>
                         </div>
+                    </div>
+                    <div class="mdui-card-actions">
+                        <button id="GrasscutterUpdate" class="mdui-btn mdui-btn-icon mdui-ripple mdui-float-right"
+                            mdui-tooltip="{content: '更新Grasscutter'}">
+                            <i class="mdui-icon material-icons">update</i>
+                        </button>
+                        <button id="GrasscutterCompile" class="mdui-btn mdui-btn-icon mdui-ripple mdui-float-right"
+                            mdui-tooltip="{content: '编译jar'}">
+                            <i class="mdui-icon material-icons">all_inclusive</i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -34,16 +44,16 @@
                     <div class="mdui-card-content">
                         <ul class="mdui-list">
                             <li class="mdui-list-item mdui-ripple" id="InstallJava">
+                                <i id="JavaStat" class="mdui-list-item-icon mdui-icon material-icons">remove</i>
                                 <div class="mdui-list-item-content">Java</div>
-                                <i class="mdui-icon material-icons">file_download</i>
                             </li>
                             <li class="mdui-list-item mdui-ripple" id="InstallMongo">
+                                <i id="MongoStat" class="mdui-list-item-icon mdui-icon material-icons">remove</i>
                                 <div class="mdui-list-item-content">MongoDB</div>
-                                <i class="mdui-icon material-icons">file_download</i>
                             </li>
                             <li class="mdui-list-item mdui-ripple" id="InstallGit">
+                                <i id="GitStat" class="mdui-list-item-icon mdui-icon material-icons">remove</i>
                                 <div class="mdui-list-item-content">Git</div>
-                                <i class="mdui-icon material-icons">file_download</i>
                             </li>
                         </ul>
                     </div>
@@ -52,14 +62,38 @@
                     <div class="mdui-card-content">
                         <ul class="mdui-list">
                             <li class="mdui-list-item mdui-ripple" id="InstallGC">
+                                <i id="GCStat" class="mdui-list-item-icon mdui-icon material-icons">remove</i>
                                 <div class="mdui-list-item-content">Grasscutter</div>
-                                <i class="mdui-icon material-icons">gamepad</i>
                             </li>
                             <li class="mdui-list-item mdui-ripple" id="InstallGCR">
+                                <i id="GCRStat" class="mdui-list-item-icon mdui-icon material-icons">remove</i>
                                 <div class="mdui-list-item-content">Grasscutter资源</div>
-                                <i class="mdui-icon material-icons">settings_input_component</i>
+                            </li>
+                            <li class="mdui-list-item mdui-ripple" id="ConfigureGC">
+                                <i class="mdui-list-item-icon mdui-icon material-icons">clear_all</i>
+                                <div class="mdui-list-item-content">配置Grasscutter</div>
+                            </li>
+                            <li class="mdui-list-item mdui-ripple" id="GrasscutterPrecompile">
+                                <i class="mdui-list-item-icon mdui-icon material-icons">developer_board</i>
+                                <div class="mdui-list-item-content">Grasscutter编译前准备</div>
                             </li>
                         </ul>
+                    </div>
+                </div>
+                <div class="mdui-card mdui-hoverable mdui-m-t-2">
+                    <div class="mdui-card-content">
+                        <div class="mdui-row mdui-m-l-2 mdui-m-r-1">
+                            <div class="mdui-textfield mdui-textfield-floating-label">
+                                <label class="mdui-textfield-label">在此输入要切换的分支名，如：development</label>
+                                <input class="mdui-textfield-input" type="text" id="BranchInput" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mdui-card-actions">
+                        <button class="mdui-btn mdui-btn-raised mdui-color-theme-accent mdui-ripple mdui-float-right"
+                            id="ChangeBranch" mdui-tooltip="{content:'切换分支'}">
+                            切换分支
+                        </button>
                     </div>
                 </div>
             </div>

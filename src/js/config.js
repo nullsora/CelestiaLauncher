@@ -12,12 +12,18 @@ let CmdDialog = {
     confirmBtn: document.getElementById('CmdConfirmBtn')
 };
 
+let GCSettings = {
+    luaFolderPath: document.getElementById('LuaPath'),
+    serverBindPort: document.getElementById('ServerPort'),
+    serverIP: document.getElementById('ServerIP'),
+    gameIP: document.getElementById('GameIP'),
+    autoCreateAccount: document.getElementById('AutoAccount'),
+    useStamia: document.getElementById('Stamina')
+};
+
 let Elements = {
-    updateGC: document.getElementById('GrasscutterUpdate'),
-    compileGC: document.getElementById('GrasscutterCompile'),
-    precompileGC: document.getElementById('GrasscutterPrecompile'),
-    configureGC: document.getElementById('ConfigureGC'),
-    changeBranch: document.getElementById('ChangeBranch')
+    loadGCSettings: document.getElementById('LoadGCSettings'),
+    openPluginFolder: document.getElementById('OpenPluginFolder')
 };
 
 window.onload = function () {
@@ -29,49 +35,23 @@ window.onload = function () {
         ipcRenderer.send('ReadJson', { Path: path.join(resPath, confPath) });
         ipcRenderer.once('JsonContent', (event, args) => {
             launcherConf = args.Obj;
-            gitPath = launcherConf.UseGitPath ? 'git' : path.join(appPath, 'game/git/cmd/git.exe');
-            if (launcherConf.AutoUpdate) {
-                AsyncSysCmd(
-                    '正在从github拉取更新...',
-                    [gitPath + 'pull'],
-                    'Grasscutter'
-                );
-            }
-            UpdateStats();
-            setInterval(UpdateStats, 500);
         });
+        ipcRenderer.send('GetStats', {});
+        ipcRenderer.once('StatsReturn', (event, args) => {
+            fileStats = args.Stats;
+            if (fileStats.hasGCConfig) {
+                Elements.loadGCSettings.removeAttribute('disabled');
+            }
+        });
+        try {
+            fs.accessSync(path.join(appPath, 'game/Grasscutter/plugins'));
+            Elements.openPluginFolder.removeAttribute('disabled');
+        } catch (e) { }
     });
 };
 
 function Caution(message) {
     mdui.snackbar({ message: message });
-}
-
-function UpdateStats() {
-    ipcRenderer.send('GetStats', {});
-    ipcRenderer.once('StatsReturn', (event, args) => {
-        fileStats = args.Stats;
-        if ((fileStats.hasGit || launcherConf.UseGitPath) && fileStats.hasGC) {
-            Elements.updateGC.removeAttribute('disabled');
-            Elements.changeBranch.removeAttribute('disabled');
-        } else {
-            Elements.updateGC.setAttribute('disabled', 'true');
-            Elements.changeBranch.setAttribute('disabled', 'true');
-        }
-        if ((fileStats.hasJDK || launcherConf.UseJDKPath) && fileStats.hasGC) {
-            if (fileStats.hasGCR) {
-                Elements.configureGC.setAttribute('class', 'mdui-list-item mdui-ripple');
-            } else {
-                Elements.configureGC.setAttribute('class', 'mdui-list-item mdui-text-color-grey');
-            }
-            Elements.compileGC.removeAttribute('disabled');
-            Elements.precompileGC.setAttribute('class', 'mdui-list-item mdui-ripple');
-        } else {
-            Elements.compileGC.setAttribute('disabled', 'true');
-            Elements.precompileGC.setAttribute('class', 'mdui-list-item mdui-text-color-grey');
-            Elements.configureGC.setAttribute('class', 'mdui-list-item mdui-text-color-grey');
-        }
-    });
 }
 
 function AsyncSysCmd(title, command, cwd) {
@@ -102,66 +82,31 @@ CmdDialog.confirmBtn.addEventListener('click', () => {
     CmdDialog.confirmBtn.setAttribute('disabled', 'true');
 });
 
-Elements.updateGC.addEventListener('click', () => {
-    AsyncSysCmd(
-        '正在从github拉取更新...',
-        [gitPath + ' pull'],
-        'Grasscutter'
-    );
+Elements.loadGCSettings.addEventListener('click', () => {
+    let GCConfig;
+    ipcRenderer.send('ReadJson', { Path: path.join(appPath, 'game/Grasscutter/config.json') });
+    ipcRenderer.once('JsonContent', (event, args) => {
+        GCConfig = args.Obj;
+        console.log(GCConfig);
+        document.getElementById('GCSettings').removeAttribute('class');
+        GCSettings.luaFolderPath.value = GCConfig.folderStructure.scripts;
+        GCSettings.serverBindPort.value = GCConfig.server.http.bindPort;
+        GCSettings.serverIP.value = GCConfig.server.http.accessAddress;
+        GCSettings.gameIP.value = GCConfig.server.game.accessAddress;
+        GCConfig.account.autoCreate ? GCSettings.autoCreateAccount.setAttribute('checked', '') : {};
+        GCConfig.server.game.gameOptions.staminaUsage ? GCSettings.useStamia.setAttribute('checked', '') : {};
+        document.getElementById('SaveChanges').addEventListener('click', () => {
+            GCConfig.folderStructure.scripts = GCSettings.luaFolderPath.value;
+            GCConfig.server.http.bindPort = GCSettings.serverBindPort.value;
+            GCConfig.server.http.accessAddress = GCSettings.serverIP.value;
+            GCConfig.server.game.accessAddress = GCSettings.gameIP.value;
+            GCConfig.account.autoCreate = GCSettings.autoCreateAccount.checked;
+            GCConfig.server.game.gameOptions.staminaUsage = GCSettings.useStamia.checked;
+            ipcRenderer.send('WriteJson', { Path: path.join(appPath, 'game/Grasscutter/config.json'), Obj: GCConfig });
+        });
+    });
 });
 
-Elements.compileGC.addEventListener('click', () => {
-    let jdkPath = path.join(appPath, 'game/jdk-17.0.3+7');
-    AsyncSysCmd(
-        '正在编译为Jar File...',
-        launcherConf.UseJDKPath ?
-            ['.\\gradlew jar'] :
-            ['set JAVA_HOME=' + jdkPath, '.\\gradlew jar'],
-        'Grasscutter'
-    );
-});
-
-Elements.precompileGC.addEventListener('click', () => {
-    if ((fileStats.hasJDK || launcherConf.UseJDKPath) && fileStats.hasGC) {
-        let jdkPath = path.join(appPath, 'game/jdk-17.0.3+7');
-        let gradlewBatPath = path.join(appPath, 'game/Grasscutter/gradlew.bat');
-        let gradlewBatClonePath = path.join(appPath, 'game/Grasscutter/gradlewclone.bat');
-        let gradlewBatContent;
-        try {
-            fs.accessSync(gradlewBatClonePath);
-            gradlewBatContent = fs.readFileSync(gradlewBatClonePath);
-        } catch (err) {
-            gradlewBatContent = fs.readFileSync(gradlewBatPath);
-            fs.writeFileSync(gradlewBatClonePath, gradlewBatContent);
-        }
-        fs.writeFileSync(gradlewBatPath, launcherConf.UseJDKPath ? '' : 'set JAVA_HOME=' + jdkPath + '\n');
-        fs.appendFileSync(gradlewBatPath, gradlewBatContent);
-        shell.openPath(gradlewBatPath);
-    }
-});
-
-Elements.configureGC.addEventListener('click', () => {
-    if ((fileStats.hasJDK || launcherConf.UseJDKPath) && fileStats.hasGC && fileStats.hasGCR) {
-        AsyncSysCmd(
-            '正在配置Grasscutter...',
-            [
-                'mkdir .\\Grasscutter\\resources',
-                'xcopy /Q /H /E /Y .\\Grasscutter_Resources\\Resources .\\Grasscutter\\resources',
-                'xcopy /H /E /Y .\\GC_res_fix\\AvatarCostumeExcelConfigData.json .\\Grasscutter\\resources\\ExcelBinOutput\\AvatarCostumeExcelConfigData.json'
-            ],
-            ''
-        );
-    }
-});
-
-Elements.changeBranch.addEventListener('click', () => {
-    if ((fileStats.hasGit || launcherConf.UseGitPath) && fileStats.hasGC) {
-        let branchName = document.getElementById('BranchInput').value;
-        console.log(branchName);
-        AsyncSysCmd(
-            '正在切换分支到' + branchName,
-            [gitPath + ' checkout ' + branchName],
-            'Grasscutter'
-        );
-    }
+Elements.openPluginFolder.addEventListener('click', () => {
+    shell.openPath(path.join(appPath, 'game/Grasscutter/plugins'));
 });

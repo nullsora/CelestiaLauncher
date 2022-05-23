@@ -10,21 +10,11 @@ let CmdDialog = {
     confirmBtn: document.getElementById('CmdConfirmBtn')
 };
 
-let GCSettings = {
-    luaFolderPath: document.getElementById('LuaPath'),
-    serverBindPort: document.getElementById('ServerPort'),
-    serverIP: document.getElementById('ServerIP'),
-    gameIP: document.getElementById('GameIP'),
-    autoCreateAccount: document.getElementById('AutoAccount'),
-    useStamia: document.getElementById('Stamina')
-};
-
 let Elements = {
     autoUpdate: document.getElementById('AutoUpdate'),
     useMongoService: document.getElementById('UseMongoService'),
     useJDKPath: document.getElementById('UseJDKPath'),
     useGitPath: document.getElementById('UseGitPath'),
-    loadGCSettings: document.getElementById('LoadGCSettings'),
     resetConfig: document.getElementById('ResetConfig'),
     removeall: document.getElementById('RemoveAll')
 };
@@ -46,9 +36,6 @@ window.onload = function () {
         ipcRenderer.send('GetStats', {});
         ipcRenderer.once('StatsReturn', (event, args) => {
             fileStats = args.Stats;
-            if (fileStats.hasGCConfig) {
-                Elements.loadGCSettings.removeAttribute('disabled');
-            }
         });
     });
 };
@@ -103,7 +90,7 @@ function RemoveAll() {
 
 Elements.autoUpdate.addEventListener('click', () => {
     if (Elements.autoUpdate.checked) {
-        Caution('请确保已经存在Git并已在启动器中设置。打开后会在你每次进入配置页面时自动更新（不编译）。');
+        Caution('请确保已经存在Git并已在启动器中设置。打开后会在你每次进入安装页面时自动更新和编译。');
         launcherConf.AutoUpdate = true;
         WriteConf();
     } else {
@@ -163,27 +150,3 @@ Elements.removeall.addEventListener('click', () => {
     });
 });
 
-Elements.loadGCSettings.addEventListener('click', () => {
-    let GCConfig;
-    ipcRenderer.send('ReadJson', { Path: path.join(appPath, 'game/Grasscutter/config.json') });
-    ipcRenderer.once('JsonContent', (event, args) => {
-        GCConfig = args.Obj;
-        console.log(GCConfig);
-        document.getElementById('GCSettings').removeAttribute('class');
-        GCSettings.luaFolderPath.value = GCConfig.folderStructure.scripts;
-        GCSettings.serverBindPort.value = GCConfig.server.http.bindPort;
-        GCSettings.serverIP.value = GCConfig.server.http.accessAddress;
-        GCSettings.gameIP.value = GCConfig.server.game.accessAddress;
-        GCConfig.account.autoCreate ? GCSettings.autoCreateAccount.setAttribute('checked', '') : {};
-        GCConfig.server.game.gameOptions.staminaUsage ? GCSettings.useStamia.setAttribute('checked', '') : {};
-        document.getElementById('SaveChanges').addEventListener('click', () => {
-            GCConfig.folderStructure.scripts = GCSettings.luaFolderPath.value;
-            GCConfig.server.http.bindPort = GCSettings.serverBindPort.value;
-            GCConfig.server.http.accessAddress = GCSettings.serverIP.value;
-            GCConfig.server.game.accessAddress = GCSettings.gameIP.value;
-            GCConfig.account.autoCreate = GCSettings.autoCreateAccount.checked;
-            GCConfig.server.game.gameOptions.staminaUsage = GCSettings.useStamia.checked;
-            ipcRenderer.send('WriteJson', { Path: path.join(appPath, 'game/Grasscutter/config.json'), Obj: GCConfig });
-        });
-    });
-});

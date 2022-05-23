@@ -5,7 +5,7 @@ body::-webkit-scrollbar {
 body {
     -webkit-user-select: none;
     margin-bottom: 16px;
-    background: url("../res/img/BackGround.png") no-repeat 50%/cover fixed, linear-gradient(90deg, rgb(35, 37, 38), rgb(65, 67, 69));
+    background: url("../res/img/BackGround.jpg") no-repeat 50%/cover fixed, linear-gradient(90deg, rgb(35, 37, 38), rgb(65, 67, 69));
 }
 
 a {
@@ -13,7 +13,7 @@ a {
 }
 
 pre {
-    background-color: lightslategrey;
+    background-color: lightslategray;
     color: white;
 }
 

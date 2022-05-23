@@ -30,8 +30,8 @@ window.addEventListener('load', () => {
                 <i class="mdui-list-item-icon mdui-icon material-icons">apps</i>
             </li>
             <li class="mdui-list-item mdui-ripple" id="link-download">
-                <div class="mdui-list-item-content">下载</div>
-                <i class="mdui-list-item-icon mdui-icon material-icons">cloud_download</i>
+                <div class="mdui-list-item-content">安装</div>
+                <i class="mdui-list-item-icon mdui-icon material-icons">view_carousel</i>
             </li>
             <li class="mdui-list-item mdui-ripple" id="link-config">
                 <div class="mdui-list-item-content">配置</div>

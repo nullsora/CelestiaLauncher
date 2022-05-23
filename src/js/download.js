@@ -1,5 +1,7 @@
 const { ipcRenderer } = require('electron');
+const { shell } = require('electron');
 const path = require('path');
+const fs = require('fs');
 
 let appPath, resPath, fileStats, launcherConf, gitPath, confPath = 'conf/config.json';
 
@@ -23,7 +25,23 @@ let Elements = {
     installGit: document.getElementById('InstallGit'),
     installGC: document.getElementById('InstallGC'),
     installGCR: document.getElementById('InstallGCR'),
+
+    updateGC: document.getElementById('GrasscutterUpdate'),
+    compileGC: document.getElementById('GrasscutterCompile'),
+    precompileGC: document.getElementById('GrasscutterPrecompile'),
+    configureGC: document.getElementById('ConfigureGC'),
+    changeBranch: document.getElementById('ChangeBranch'),
+    branchInput: document.getElementById('BranchInput'),
+
     canInstallGC: true
+};
+
+let Icons = {
+    Java: document.getElementById('JavaStat'),
+    Mongo: document.getElementById('MongoStat'),
+    Git: document.getElementById('GitStat'),
+    GC: document.getElementById('GCStat'),
+    GCR: document.getElementById('GCRStat')
 };
 
 window.onload = function () {
@@ -36,6 +54,16 @@ window.onload = function () {
         ipcRenderer.once('JsonContent', (event, args) => {
             launcherConf = args.Obj;
             gitPath = launcherConf.UseGitPath ? 'git' : path.join(appPath, 'game/git/cmd/git.exe');
+            if (launcherConf.AutoUpdate) {
+                AsyncSysCmd(
+                    '正在更新并编译...',
+                    [
+                        gitPath + ' pull',
+                        '.\\gradlew jar'
+                    ],
+                    'Grasscutter'
+                );
+            }
             UpdateStats();
             setInterval(UpdateStats, 500);
         });
@@ -57,6 +85,48 @@ function UpdateStats() {
         } else {
             Elements.installGC.setAttribute('class', 'mdui-list-item mdui-text-color-grey');
             Elements.installGCR.setAttribute('class', 'mdui-list-item mdui-text-color-grey');
+        }
+        if ((fileStats.hasGit || launcherConf.UseGitPath) && fileStats.hasGC) {
+            Elements.updateGC.removeAttribute('disabled');
+            Elements.changeBranch.removeAttribute('disabled');
+            Elements.branchInput.removeAttribute('disabled');
+        } else {
+            Elements.updateGC.setAttribute('disabled', 'true');
+            Elements.changeBranch.setAttribute('disabled', 'true');
+            Elements.branchInput.setAttribute('disabled', 'true');
+        }
+        if ((fileStats.hasJDK || launcherConf.UseJDKPath) && fileStats.hasGC) {
+            if (fileStats.hasGCR) {
+                Elements.configureGC.setAttribute('class', 'mdui-list-item mdui-ripple');
+            } else {
+                Elements.configureGC.setAttribute('class', 'mdui-list-item mdui-text-color-grey');
+            }
+            Elements.compileGC.removeAttribute('disabled');
+            Elements.precompileGC.setAttribute('class', 'mdui-list-item mdui-ripple');
+        } else {
+            Elements.compileGC.setAttribute('disabled', 'true');
+            Elements.precompileGC.setAttribute('class', 'mdui-list-item mdui-text-color-grey');
+            Elements.configureGC.setAttribute('class', 'mdui-list-item mdui-text-color-grey');
+        }
+        if (fileStats.hasJDK || launcherConf.UseJDKPath) {
+            Icons.Java.innerHTML = 'checked';
+            Icons.Java.setAttribute('class', 'mdui-list-item-icon mdui-icon material-icons mdui-text-color-green');
+        }
+        if (fileStats.hasMongo || launcherConf.UseMongoService) {
+            Icons.Mongo.innerHTML = 'checked';
+            Icons.Mongo.setAttribute('class', 'mdui-list-item-icon mdui-icon material-icons mdui-text-color-green');
+        }
+        if (fileStats.hasGit || launcherConf.UseGitPath) {
+            Icons.Git.innerHTML = 'checked';
+            Icons.Git.setAttribute('class', 'mdui-list-item-icon mdui-icon material-icons mdui-text-color-green');
+        }
+        if (fileStats.hasGC) {
+            Icons.GC.innerHTML = 'checked';
+            Icons.GC.setAttribute('class', 'mdui-list-item-icon mdui-icon material-icons mdui-text-color-green');
+        }
+        if (fileStats.hasGCR) {
+            Icons.GCR.innerHTML = 'checked';
+            Icons.GCR.setAttribute('class', 'mdui-list-item-icon mdui-icon material-icons mdui-text-color-green');
         }
     });
 }
@@ -174,6 +244,70 @@ Elements.installGCR.addEventListener('click', () => {
             '正在从Github下载Grasscutter所需资源...',
             [gitPath + ' clone https://ghproxy.com/https://github.com/Koko-boya/Grasscutter_Resources.git'],
             ''
+        );
+    }
+});
+
+Elements.updateGC.addEventListener('click', () => {
+    AsyncSysCmd(
+        '正在从github拉取更新...',
+        [gitPath + ' pull'],
+        'Grasscutter'
+    );
+});
+
+Elements.compileGC.addEventListener('click', () => {
+    let jdkPath = path.join(appPath, 'game/jdk-17.0.3+7');
+    AsyncSysCmd(
+        '正在编译为Jar File...',
+        launcherConf.UseJDKPath ?
+            ['.\\gradlew jar'] :
+            ['set JAVA_HOME=' + jdkPath, '.\\gradlew jar'],
+        'Grasscutter'
+    );
+});
+
+Elements.precompileGC.addEventListener('click', () => {
+    if ((fileStats.hasJDK || launcherConf.UseJDKPath) && fileStats.hasGC) {
+        let jdkPath = path.join(appPath, 'game/jdk-17.0.3+7');
+        let gradlewBatPath = path.join(appPath, 'game/Grasscutter/gradlew.bat');
+        let gradlewBatClonePath = path.join(appPath, 'game/Grasscutter/gradlewclone.bat');
+        let gradlewBatContent;
+        try {
+            fs.accessSync(gradlewBatClonePath);
+            gradlewBatContent = fs.readFileSync(gradlewBatClonePath);
+        } catch (err) {
+            gradlewBatContent = fs.readFileSync(gradlewBatPath);
+            fs.writeFileSync(gradlewBatClonePath, gradlewBatContent);
+        }
+        fs.writeFileSync(gradlewBatPath, launcherConf.UseJDKPath ? '' : 'set JAVA_HOME=' + jdkPath + '\n');
+        fs.appendFileSync(gradlewBatPath, gradlewBatContent);
+        shell.openPath(gradlewBatPath);
+    }
+});
+
+Elements.configureGC.addEventListener('click', () => {
+    if ((fileStats.hasJDK || launcherConf.UseJDKPath) && fileStats.hasGC && fileStats.hasGCR) {
+        AsyncSysCmd(
+            '正在配置Grasscutter...',
+            [
+                'mkdir .\\Grasscutter\\resources',
+                'xcopy /Q /H /E /Y .\\Grasscutter_Resources\\Resources .\\Grasscutter\\resources',
+                'xcopy /H /E /Y .\\GC_res_fix\\AvatarCostumeExcelConfigData.json .\\Grasscutter\\resources\\ExcelBinOutput\\AvatarCostumeExcelConfigData.json'
+            ],
+            ''
+        );
+    }
+});
+
+Elements.changeBranch.addEventListener('click', () => {
+    if ((fileStats.hasGit || launcherConf.UseGitPath) && fileStats.hasGC) {
+        let branchName = Elements.branchInput.value;
+        console.log(branchName);
+        AsyncSysCmd(
+            '正在切换分支到' + branchName,
+            [gitPath + ' checkout ' + branchName],
+            'Grasscutter'
         );
     }
 });
