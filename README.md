@@ -37,7 +37,7 @@
 
 ### 使用
 
-启动软件后，您可以进入下载页面下载Grasscutter及其依赖。您也可以在偏好设置中选择使用系统环境变量。
+启动软件后，您可以进入安装页面下载Grasscutter及其依赖。您也可以在偏好设置中选择使用系统环境变量。
 
 #### 下载依赖
 
@@ -46,7 +46,7 @@
 - 下载`Git`，`Java`和`MongoDB`，或使用系统设置。
 - 下载`Grasscutter`和`Grasscutter资源`。
 - 点击`配置Grasscutter`和`Grasscutter编译前准备`。
-- 点击下载页面左侧的`编译jar`按钮以生成Grasscutter Jar文件。
+- 点击安装页面左侧的`编译jar`按钮以生成Grasscutter Jar文件。
 
 #### 运行Grasscutter
 
@@ -54,13 +54,13 @@
 
 #### 更新Grasscutter
 
-下载页面左侧的`更新Grasscutter`按钮可以帮您从github拉取最新更新。
+安装页面左侧的`更新Grasscutter`按钮可以帮您从github拉取最新更新。
 
 在拉取完成后，仅需再次点击`编译jar`即可完成更新。
 
 #### 切换Grasscutter分支
 
-在下载页面中，您可以通过输入存在的Grasscutter分支名来切换到对应分支。
+在安装页面中，您可以通过输入存在的Grasscutter分支名来切换到对应分支。
 
 #### 配置Grasscutter
 
@@ -70,7 +70,7 @@
 #### 其他
 
 - 页面中的内容不会在您完成对应依赖配置前可用。
-- 下载页面会指示您对应依赖的下载状况。
+- 安装页面会指示您对应依赖的下载状况。
 
 ### 更新
 

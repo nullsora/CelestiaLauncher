@@ -37,7 +37,7 @@ You can then run `Celestia Launcher.exe` to launch the software.
 
 ### Running
 
-After starting the software, you can go to the download (`下载`) page to download Grasscutter and its dependencies. You can also choose to use system environment variables in Preferences (`偏好设置`) .
+After starting the software, you can go to the download (`安装`) page to download Grasscutter and its dependencies. You can also choose to use system environment variables in Preferences (`偏好设置`) .
 
 #### Download dependencies of Grasscutter
 
