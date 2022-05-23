@@ -1,64 +1,110 @@
 ![csl.jpg](https://s2.loli.net/2022/05/14/7ajYoZDTyxrgRsN.jpg)
 
-------------
-中文 | [English](https://github.com/KL-kirito/CelestiaLauncher/blob/master/README_EN.md)
+一个便捷的 Grasscutter 依赖下载及启动工具
 
-## 一个功能~~不~~强大的Grasscutter启动器
-
-> 如果你还在为不会配置Grasscutter而烦恼，那么你一定要试试这款启动器。
-
-## 简介
-
-Celestia Launcher 可以帮您下载Grasscutter的全部依赖和资源，切换分支，更新和一键启动，保证您使用Grasscutter的畅通无阻。
+------
 
 ## 特性
 
 - [x] 便捷且安全的下载依赖
 - [x] 启动Grasscutter
-- [x] 从github更新Grasscutter并可编译
+- [x] 从Github更新Grasscutter并可编译
 - [x] 允许使用系统环境变量
 - [x] 便捷的对Grasscutter config文件进行更改
 - [ ] 完善的自动更新功能
 - [ ] 应用内命令面板
 - [ ] ID查询
 
-## 使用
+## 上手指南
 
-Celestia Launcher目前仅可在Windows平台使用。
-在Release页面下载zip文件后，将它解压到一个纯英文，有足够空间的目录下，打开exe即可。
+以下内容将帮助您快速安装并上手Celestia Launcher。
 
-## 配置顺序
+### 安装要求
 
-请按照以下步骤完成Grasscutter的配置安装：
+在下载并安装该软件前，请确保：
 
-1. 点击左上角按钮，进入下载页面；
-2. 下载Java、MongoDB以及Git，或者在偏好设置页面启用系统环境（如果您之前安装过）；
-3. 下载Grasscutter和Grasscutter资源；
+- 您的电脑运行着Windows 64位系统。
+- 为软件及Grasscutter预留至少3GB的空间。
 
-    **请确保在此时Git已经下载完成！**
+### 安装
 
-4. 进入配置页面，依次点击`配置Grasscutter`和`Grasscutter编译前准备`；
+您可以从Release页面下载该软件的最新版本。
 
-    **请确保已经下载了Grasscutter和资源！**
+- 如果您下载exe安装包，根据提示安装到有足够空间的目录下即可。
+- 如果您下载zip压缩包，请解压到有足够空间的目录下。
 
-到这里准备工作便全部完成了。
+随后，您便可以运行`Celestia Launcher.exe`以启动软件。
 
-## 更新，编译和运行
+### 使用
 
-配置页面中的两个按钮可以方便的拉取更新和编译Grasscutter。
+启动软件后，您可以进入下载页面下载Grasscutter及其依赖。您也可以在偏好设置中选择使用系统环境变量。
 
-您也可以在配置页面方便的切换Grasscutter的分支。
+#### 下载依赖
 
-编译完成后，即可回到主页并运行。
+依次执行如下步骤：
 
-**请注意：本启动器并不会帮助您设置代理。您可能需要手动设置。**
+- 下载`Git`，`Java`和`MongoDB`，或使用系统设置。
+- 下载`Grasscutter`和`Grasscutter资源`。
+- 点击`配置Grasscutter`和`Grasscutter编译前准备`。
+- 点击下载页面左侧的`编译jar`按钮以生成Grasscutter Jar文件。
 
-## 更新启动器
+#### 运行Grasscutter
 
-如果您在更新后不想再重新下载一遍文件，那么您应当保留`resources/app/resources`目录下的`jdk17.0.3+7`,`git`,`mongodb-win32-x86_64-windows-5.0.8`,`Grasscutter`和`Grasscutter_Resources`文件夹。
+下载并配置全部依赖后，您可以回到主页，选择对应的jar文件并启动。
 
-为了完全更新，您最好不要保留除上述文件夹外的其他文件和目录。
+#### 更新Grasscutter
 
-------------
+下载页面左侧的`更新Grasscutter`按钮可以帮您从github拉取最新更新。
 
-如发现了各种问题，请到issues页面反馈。我会尽快修复bug。
+在拉取完成后，仅需再次点击`编译jar`即可完成更新。
+
+#### 切换Grasscutter分支
+
+在下载页面中，您可以通过输入存在的Grasscutter分支名来切换到对应分支。
+
+#### 配置Grasscutter
+
+- 我们在配置页面实现了对Grasscutter常用配置的更改功能，您可以在配置文件生成后快速更改。
+- 您也可以在配置页面快速打开插件文件夹。
+
+#### 其他
+
+- 页面中的内容不会在您完成对应依赖配置前可用。
+- 下载页面会指示您对应依赖的下载状况。
+
+### 更新
+
+您可以通过保留安装目录下`game`目录中的内容来保留已下载的文件。其他目录或文件可以全部删除并替换。
+
+## 从源码构建
+
+您也可以通过源码运行或构建Celestia Launcher。
+
+在构建之前，请确保您已经有`node.js`环境，并全局安装了`yarn`。
+
+克隆源代码后，在目录下执行如下命令：
+
+```shell
+yarn install
+yarn run build
+```
+
+完成后，在`bulid`目录下将会生成软件。
+
+## 版本
+
+您可以在[标签](https://github.com/KL-kirito/CelestiaLauncher/tags)中查看可用版本
+
+## 作者
+
+- **KL-kirito**
+
+您可以在 [contributors](https://github.com/KL-kirito/CelestiaLauncher/contributors) 中查看所以参与项目的开发者。
+
+## License
+
+This project is licensed under the Apache License - see the [LICENSE](LICENSE) file for details.
+
+## 反馈
+
+您可以通过issues页面反馈bug或其他的问题。我会尽快解决。
