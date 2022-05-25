@@ -2,6 +2,8 @@
 
 一个便捷的 Grasscutter 依赖下载及启动工具
 
+中文 | [English](README_EN.md)
+
 ------
 
 ## 特性
@@ -86,7 +88,7 @@
 
 ```shell
 yarn install
-yarn run build
+yarn build
 ```
 
 完成后，在`bulid`目录下将会生成软件。

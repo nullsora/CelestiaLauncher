@@ -2,6 +2,8 @@
 
 A convenient Grasscutter dependency download and launch tool
 
+[中文](README.md) | English
+
 ------
 
 ## Features
@@ -86,7 +88,7 @@ After cloning the source code, execute the following command in the directory:
 
 ```shell
 yarn install
-yarn run build
+yarn build
 ````
 
 After completion, the software will be generated in the `bulid` directory.

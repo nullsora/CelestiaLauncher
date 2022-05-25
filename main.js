@@ -19,7 +19,7 @@ function createWindow() {
         }
     });
     mainWindow.loadFile('./src/index.html');
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
     InitDownloadEvtIn(mainWindow);
     InitUnzipEvtIn(mainWindow);
     InitJsonOperatorIn(mainWindow);

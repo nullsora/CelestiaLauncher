@@ -73,7 +73,7 @@ exports.InitUnzipEvtIn = function (win) {
         });
         unzipper.on('extract', function (log) {
             win.webContents.send('UnzipFinish', {});
-            exec('del /S /Q ' + fPath, () => { });
+            exec('del /S /Q ' + `"${fPath}"`, () => { });
             Reset();
         });
     });

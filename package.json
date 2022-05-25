@@ -1,6 +1,6 @@
 {
   "name": "celestia-launcher",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "A Launcher for Grasscutter",
   "main": "main.js",
   "scripts": {
@@ -11,7 +11,7 @@
   },
   "build": {
     "appId": "com.celestialauncher.app",
-    "productName": "Celestia Launcher",
+    "productName": "Celestia-Launcher",
     "win": {
       "icon": "./src/res/img/CL.ico",
       "target": [
@@ -20,7 +20,8 @@
           "arch": [
             "x64"
           ]
-        }
+        },
+        "zip"
       ]
     },
     "directories": {

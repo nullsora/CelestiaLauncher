@@ -53,7 +53,7 @@ window.onload = function () {
         ipcRenderer.send('ReadJson', { Path: path.join(resPath, confPath) });
         ipcRenderer.once('JsonContent', (event, args) => {
             launcherConf = args.Obj;
-            gitPath = launcherConf.UseGitPath ? 'git' : path.join(appPath, 'game/git/cmd/git.exe');
+            gitPath = launcherConf.UseGitPath ? 'git' : `"${path.join(appPath, 'game/git/cmd/git.exe')}"`;
             if (launcherConf.AutoUpdate) {
                 AsyncSysCmd(
                     '正在更新并编译...',
@@ -262,7 +262,7 @@ Elements.compileGC.addEventListener('click', () => {
         '正在编译为Jar File...',
         launcherConf.UseJDKPath ?
             ['.\\gradlew jar'] :
-            ['set JAVA_HOME=' + jdkPath, '.\\gradlew jar'],
+            ['set JAVA_HOME=' + `"${jdkPath}"`, '.\\gradlew jar'],
         'Grasscutter'
     );
 });
@@ -280,7 +280,7 @@ Elements.precompileGC.addEventListener('click', () => {
             gradlewBatContent = fs.readFileSync(gradlewBatPath);
             fs.writeFileSync(gradlewBatClonePath, gradlewBatContent);
         }
-        fs.writeFileSync(gradlewBatPath, launcherConf.UseJDKPath ? '' : 'set JAVA_HOME=' + jdkPath + '\n');
+        fs.writeFileSync(gradlewBatPath, launcherConf.UseJDKPath ? '' : 'set JAVA_HOME=' + `"${jdkPath}"` + '\n');
         fs.appendFileSync(gradlewBatPath, gradlewBatContent);
         shell.openPath(gradlewBatPath);
     }

@@ -59,7 +59,7 @@ document.getElementById('LaunchGame').addEventListener('click', () => {
     let jdkPath = path.join(appPath, 'game\\jdk-17.0.3+7\\bin\\java.exe');
     let value = document.getElementById('JarSelect').selectedIndex;
     let launchContent = '@echo off\ncd .\\Grasscutter\\\n' +
-        (launcherConf.UseJDKPath ? 'java' : jdkPath) +
+        (launcherConf.UseJDKPath ? 'java' : `"${jdkPath}"`) +
         ' -jar ' + jarPath[value];
     fs.writeFileSync(launchPath, launchContent);
     launcherConf.UseMongoService ? {} : shell.openPath(mongoPath);
