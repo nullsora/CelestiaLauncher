@@ -23,7 +23,7 @@ window.onload = function () {
                         if (!err) {
                             let isFile = stats.isFile();
                             if (isFile && path.extname(fileDir) == '.jar') {
-                                let value = jarPath.push(fileDir);
+                                let value = jarPath.push(`${fileDir}`);
                                 $('#JarSelect').append('<option value="' + value + '">' + fileName + '</option>');
                                 jarSelect.handleUpdate();
                                 console.log(jarPath.toString());
